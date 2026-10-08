@@ -16,6 +16,8 @@ export interface Content {
   github: string;
   linkedin?: string;
   resume: string;
+  /** Address of the visitor-count backend (worker/). Empty until it is deployed. */
+  statsApi?: string;
   bio: string[];
   intro?: { k: string; v: string }[];
   status: string;

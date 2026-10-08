@@ -1,0 +1,25 @@
+name = "nsquaredzz-stats"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# One request a day at 00:05 IST (18:35 UTC) to forget yesterday's visitor hashes.
+[triggers]
+crons = ["35 18 * * *"]
+
+[vars]
+# Sites allowed to report visits and read the numbers, comma separated.
+ALLOWED_ORIGINS = "https://nsquaredzz.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nsquaredzz-stats"
+# Filled in by `wrangler d1 create nsquaredzz-stats` when the worker is first deployed.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[observability]
+enabled = true
+
+# Secrets, set with `wrangler secret put`, never committed:
+#   SALT         mixed into the visitor hash, so hashes cannot be reproduced from an IP address
+#   ADMIN_TOKEN  required to read /stats

@@ -2,10 +2,12 @@ import "katex/dist/katex.min.css";
 import "./theme.css";
 import "./paper.css";
 import { initTheme, wireToggle } from "./theme";
+import { recordVisit } from "./visits";
 
 // the same theme as the terminal; the button in the top bar switches between light and dark
 initTheme();
 for (const b of document.querySelectorAll<HTMLElement>(".p-theme")) wireToggle(b);
+void recordVisit();
 
 // highlight the section being read in the contents list
 const links = [...document.querySelectorAll<HTMLAnchorElement>(".p-toc a")];

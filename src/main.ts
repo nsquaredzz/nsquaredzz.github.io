@@ -12,6 +12,7 @@ import { renderPlain } from "./plain";
 import posts from "./generated/posts.json";
 import { initTheme, isLight, otherSide } from "./theme";
 import { setScene } from "./sprite/sprite";
+import { recordVisit } from "./visits";
 
 const C = content as Content;
 
@@ -43,6 +44,7 @@ const startTheme = initTheme();   // before anything is drawn, in the terminal a
 
 if (params.has("plain")) {
   renderPlain(app, C);
+  void recordVisit();   // the terminal reports its own visit from the status bar
 } else {
   boot();
 }

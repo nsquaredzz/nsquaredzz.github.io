@@ -32,6 +32,8 @@ src/
   banner.ts            the ascii name banner
   status.ts            uptime, blr clock, visitors, blips online
   plain.ts             the semantic html version
+  visits.ts            reports a page view to the visitor counter and reads the public numbers
+  stats.ts, stats.css  the private visitor dashboard at /stats/
   paper.ts, paper.css  the paper-style page used by blog posts
   style.css            the terminal's stylesheet. one font, seven colours
   theme.css, theme.ts  the seven colours for dark and for light, and the switch between them
@@ -122,6 +124,15 @@ Argument.
 - `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
 
 the page template and the markdown handling are in `scripts/build-posts.mjs`. the look is `src/paper.css`.
+
+## visitor counter
+
+`worker/` is a small backend, a Cloudflare Worker with a database, that counts visitors. It has its own [README](worker/README.md) with what is counted, how to test it and how to deploy it.
+
+- `statsApi` in `src/content.json` is the worker's address. While it is empty the site falls back to a third-party page-load counter and the `stats` command stays hidden.
+- the corner of the terminal shows people today and visits so far. `stats` prints the same.
+- `/stats/` is the private dashboard: history, pages, referrers and countries. It opens with the admin token.
+- `notrack` in the terminal, or the checkbox on the dashboard, stops your own browser from being counted.
 
 ## add a command
 

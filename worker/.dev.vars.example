@@ -1,0 +1,5 @@
+# Local development only. Copy to .dev.vars (git-ignored). These are throwaway test values;
+# the real ones are set on Cloudflare with `wrangler secret put`.
+SALT = "local-dev-salt"
+ADMIN_TOKEN = "local-dev-token"
+ALLOWED_ORIGINS = "https://nsquaredzz.github.io,http://localhost:5173"

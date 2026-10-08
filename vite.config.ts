@@ -3,7 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 // every generated blog page (see scripts/build-posts.mjs) is its own html entry
-const input: Record<string, string> = { main: "index.html" };
+// stats/ is the private visitor dashboard (it shows nothing without the admin token)
+const input: Record<string, string> = { main: "index.html", stats: "stats/index.html" };
 const blog = path.resolve(__dirname, "blog");
 if (fs.existsSync(blog)) {
   input["blog"] = "blog/index.html";

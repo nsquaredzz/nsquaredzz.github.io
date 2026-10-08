@@ -5,6 +5,7 @@ import type { Engine } from "../sprite/engine";
 import { istHour, uptime } from "../status";
 import posts from "../generated/posts.json";
 import { type Theme, setTheme, nextTheme, parseTheme } from "../theme";
+import { ignored, publicCounts, setIgnored, statsOn } from "../visits";
 
 export interface Ctx {
   term: Terminal;
@@ -143,6 +144,28 @@ export const commands: Command[] = [
     },
   },
   { name: "clear", desc: "clear the screen", group: "basics", run(_p, ctx) { ctx.term.clear(); } },
+  {
+    name: "stats", desc: "how many people have visited", group: "basics", hidden: !statsOn,
+    async run(_p, ctx) {
+      const t = ctx.term;
+      if (!statsOn) { t.text("stats: the visitor counter is not connected yet.", "dim"); return; }
+      const c = await publicCounts();
+      if (!c) { t.text("stats: the counter is not answering right now.", "err"); return; }
+      t.openBox("visitors", `since ${c.since}`);
+      t.print(`<div class="help-row"><span class="cmd-name">today</span><span>${c.today} ${c.today === 1 ? "person" : "people"}</span></div>`);
+      t.print(`<div class="help-row"><span class="cmd-name">all time</span><span>${c.total} ${c.total === 1 ? "visit" : "visits"}</span></div>`);
+      t.closeBox();
+      t.text("a visit is one person on one day. no cookies, and no ip addresses are kept.", "dim");
+      if (ignored()) t.print("this browser is not being counted. <code>notrack</code> switches that back.", "dim");
+    },
+  },
+  {
+    name: "notrack", desc: "", hidden: true,
+    run(_p, ctx) {
+      setIgnored(!ignored());
+      ctx.term.text(ignored() ? "ok. visits from this browser will not be counted." : "ok. visits from this browser are counted again.", "dim");
+    },
+  },
   {
     name: "history", desc: "what you typed", group: "basics",
     run(_p, ctx) { ctx.term.history.forEach((h, i) => ctx.term.text(`${String(i + 1).padStart(4)}  ${h}`)); },

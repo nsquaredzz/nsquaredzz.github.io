@@ -1,0 +1,17 @@
+{
+  "name": "nsquaredzz-stats",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler d1 migrations apply nsquaredzz-stats --local && wrangler dev --port 8787",
+    "test": "node --test test/*.test.mjs",
+    "check": "tsc --noEmit",
+    "migrate": "wrangler d1 migrations apply nsquaredzz-stats --remote",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5",
+    "typescript": "^5",
+    "wrangler": "^4"
+  }
+}
