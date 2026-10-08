@@ -53,7 +53,7 @@ public/
 
 ## themes
 
-three looks, chosen with `theme [crt|flat|light]` or the `light` / `dark` button: `crt` is the default (warm black, scanlines, a little glow), `flat` is the same without the effects, `light` is warm paper. the choice is kept in `localStorage` and applies to the terminal, plain mode and the blog pages. a one-line script in each page's `<head>` sets it before the first paint, so there is no flash.
+three looks, chosen with `theme [crt|flat|light]`, with `light` or `dark` typed on their own, or with the `theme light` / `theme dark` button: `crt` is the default (warm black, scanlines, a little glow), `flat` is the same without the effects, `light` is warm paper. the choice is kept in `localStorage` and applies to the terminal, plain mode and the blog pages. a one-line script in each page's `<head>` sets it before the first paint, so there is no flash.
 
 every colour is a variable in `src/theme.css`. the light palette keeps the hues of the dark one, darkened until text clears 4.5:1 on the page. blip has its own two palettes in `src/sprite/sprite.ts`, because a cream head would vanish on paper.
 

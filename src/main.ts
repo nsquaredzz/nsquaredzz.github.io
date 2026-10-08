@@ -149,7 +149,7 @@ function boot() {
     b.addEventListener("click", () => { void term.type(cmd, 18); });
     tags.appendChild(b);
   }
-  // light/dark switch: it names the side it leads to, and runs the command like every other button
+  // light/dark switch: its label is the command it runs, `theme light` or `theme dark`, like every other button
   const sides: HTMLButtonElement[] = [];
   const sideButton = (run: (cmd: string) => void) => {
     const b = document.createElement("button");
@@ -158,7 +158,7 @@ function boot() {
     sides.push(b);
     return b;
   };
-  const labelSides = () => { for (const b of sides) { b.textContent = otherSide(); b.setAttribute("aria-label", `switch to the ${otherSide()} theme`); } };
+  const labelSides = () => { for (const b of sides) { b.textContent = `theme ${otherSide()}`; b.setAttribute("aria-label", `switch to the ${otherSide()} theme`); } };
   addEventListener("themechange", labelSides);
   tags.appendChild(sideButton((cmd) => { void term.type(cmd, 18); }));
 

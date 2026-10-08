@@ -255,7 +255,7 @@ body::after {
 .plain .nav { display: flex; gap: 14px; flex-wrap: wrap; margin: 14px 0 10px; font-size: 13px; }
 .plain .nav a { color: var(--lilac); }
 .plain .nav .t-link { color: var(--dim); margin-left: auto; }
-.plain .nav .t-link::before { content: "theme: "; }
+.plain .nav .t-link::after { content: " theme"; }
 .plain .back { display: inline-block; margin-top: 30px; color: var(--dim); font-size: 13px; }
 .plain .status-dot { color: var(--green); }
 .plain code { color: var(--lilac); }

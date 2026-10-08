@@ -148,15 +148,20 @@ export const commands: Command[] = [
     run(_p, ctx) { ctx.term.history.forEach((h, i) => ctx.term.text(`${String(i + 1).padStart(4)}  ${h}`)); },
   },
   {
-    name: "theme", desc: "crt, flat or light", usage: "theme [crt|flat|light]", group: "basics",
+    name: "theme", desc: "colours: crt, flat or light", usage: "theme [crt|flat|light]", group: "basics",
     run(p, ctx) {
       // no argument steps through the three; "dark" goes back to the dark look last used
       const want = p.args[0] ? parseTheme(p.args[0]) : nextTheme(ctx.theme);
-      if (!want) { ctx.term.text("theme: crt, flat or light", "err"); return; }
+      if (!want) { ctx.term.text("theme: crt, flat, light or dark", "err"); return; }
       setTheme(want);   // main.ts keeps ctx.theme in step through the themechange event
-      ctx.term.text(`theme: ${want}`, "dim");
+      ctx.term.text(want === "light" ? "theme: light" : `theme: dark (${want})`, "dim");
     },
   },
+  // the theme names work on their own too: `light`, `dark`, `crt`, `flat`
+  ...["light", "dark", "crt", "flat"].map((name): Command => ({
+    name, desc: "", hidden: true,
+    run(p, ctx) { return find("theme")!.run({ ...p, args: [name] }, ctx); },
+  })),
 
   { name: "work", desc: "where i've worked", group: "shortcuts", run(_p, ctx) { catDir(ctx.term, "~/work", ctx); } },
   { name: "projects", desc: "things i've built", group: "shortcuts", run(_p, ctx) { catDir(ctx.term, "~/projects", ctx); } },

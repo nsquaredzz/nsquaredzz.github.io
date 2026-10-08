@@ -41,7 +41,7 @@ a:hover { border-bottom-color: var(--lilac); }
 .p-theme { font: inherit; color: var(--dim); background: none; border: 0; padding: 0; cursor: pointer; }
 .p-theme:hover { color: var(--amber); }
 .p-theme:focus-visible { outline: 1px solid var(--green); outline-offset: 3px; }
-.p-theme::before { content: "theme: "; }
+.p-theme::after { content: " theme"; }
 
 .p-wrap { display: grid; grid-template-columns: minmax(0, 1fr); max-width: 860px; margin: 0 auto; padding: 0 28px; }
 .p-wrap-narrow { max-width: 760px; }
