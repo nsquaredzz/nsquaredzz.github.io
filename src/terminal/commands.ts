@@ -2,16 +2,12 @@ import type { Parsed } from "./parser";
 import type { FS, FileEntry } from "./fs";
 import { Terminal, esc } from "./terminal";
 import type { Engine } from "../sprite/engine";
-import { snake } from "../games/snake";
-import { breakout } from "../games/breakout";
-import { sqlGolf } from "../games/sqlgolf";
 import { istHour, uptime } from "../status";
 
 export interface Ctx {
   term: Terminal;
   fs: FS;
   engine: Engine;
-  lineHook: ((line: string) => void) | null;
   theme: "crt" | "flat";
 }
 
@@ -199,28 +195,6 @@ export const commands: Command[] = [
       ctx.term.text("a bit falls somewhere. blip's on it.", "dim");
     },
   },
-
-  {
-    name: "play", desc: "snake, breakout, sql-golf", usage: "play [game]", group: "games",
-    run(p, ctx) {
-      const g = p.args[0];
-      if (!g) {
-        ctx.term.openBox("games");
-        ctx.term.print(`<div class="help-row"><span class="cmd-name">play snake</span><span>the classic, in bone and amber</span></div>`);
-        ctx.term.print(`<div class="help-row"><span class="cmd-name">play breakout</span><span>the bricks are my name</span></div>`);
-        ctx.term.print(`<div class="help-row"><span class="cmd-name">play sql-golf</span><span>shortest query wins. text-to-sql, by hand</span></div>`);
-        ctx.term.closeBox();
-        return;
-      }
-      if (g === "snake") { snake(ctx.term, (s) => ctx.term.text(`snake: ${s} point${s === 1 ? "" : "s"}.`, "dim")); return; }
-      if (g === "breakout") { breakout(ctx.term, (left, total) => ctx.term.text(left ? `breakout: ${total - left}/${total} bricks.` : "breakout: you cleared my name. rude, but impressive.", "dim")); return; }
-      if (g === "sql-golf" || g === "sql" || g === "golf") { ctx.lineHook = sqlGolf(ctx.term, () => { ctx.lineHook = null; }); return; }
-      ctx.term.text(`play: ${g}: not a game here. try \`play\`.`, "err");
-    },
-  },
-  { name: "snake", desc: "", hidden: true, run(p, ctx) { p.args = ["snake"]; return commands.find((c) => c.name === "play")!.run(p, ctx); } },
-  { name: "breakout", desc: "", hidden: true, run(p, ctx) { p.args = ["breakout"]; return commands.find((c) => c.name === "play")!.run(p, ctx); } },
-  { name: "sql-golf", desc: "", hidden: true, run(p, ctx) { p.args = ["sql-golf"]; return commands.find((c) => c.name === "play")!.run(p, ctx); } },
 
   // ---- not in help ----
   {

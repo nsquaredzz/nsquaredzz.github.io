@@ -1,5 +1,3 @@
-export type KeyHandler = (e: KeyboardEvent) => void;
-
 export const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export function esc(s: string): string {
@@ -22,10 +20,8 @@ export class Terminal {
   private draft = "";
   private typing = false;
   private cancelTyping = false;
-  private keyCapture: KeyHandler | null = null;
   onRun: (line: string) => Promise<void> | void = () => {};
   onComplete: (line: string) => string[] = () => [];
-  onInterrupt: (() => void) | null = null;
   private cur: HTMLElement;
 
   constructor(public root: HTMLElement) {
@@ -54,7 +50,7 @@ export class Terminal {
     this.input.addEventListener("focus", () => this.cursorEl.classList.remove("off"));
     root.addEventListener("click", (e) => {
       const t = e.target as HTMLElement;
-      if (t.closest("a,button,canvas,.game")) return;
+      if (t.closest("a,button")) return;
       if (getSelection()?.toString()) return;
       this.focus();
     });
@@ -97,9 +93,6 @@ export class Terminal {
 
   lines(ls: string[], cls = "") { for (const l of ls) this.text(l, cls); }
 
-  /** Append an arbitrary element (used by games). */
-  mount(el: HTMLElement) { this.cur.appendChild(el); this.scroll(); }
-
   echo(line: string) {
     this.print(`<span class="ps1">${esc(this.ps1)}</span><span class="typed">${esc(line)}</span>`, "echo");
   }
@@ -109,18 +102,6 @@ export class Terminal {
   scroll() {
     requestAnimationFrame(() => window.scrollTo({ top: document.body.scrollHeight, behavior: "instant" as ScrollBehavior }));
   }
-
-  private docKey = (e: KeyboardEvent) => { if (this.keyCapture) this.keyCapture(e); };
-
-  /** While set, every keydown goes to the handler instead of the prompt (games). */
-  capture(h: KeyHandler | null) {
-    this.keyCapture = h;
-    document.removeEventListener("keydown", this.docKey);
-    if (h) { document.addEventListener("keydown", this.docKey); this.cursorEl.classList.add("off"); this.input.value = ""; this.render(); }
-    else { this.cursorEl.classList.remove("off"); this.focus(); }
-  }
-
-  get captured() { return this.keyCapture !== null; }
 
   private async submit() {
     const line = this.input.value;
@@ -162,7 +143,6 @@ export class Terminal {
   }
 
   private key(e: KeyboardEvent) {
-    if (this.keyCapture) return; // bubbles to docKey
     if (this.typing) { this.cancelTyping = true; return; }
     const v = this.input.value;
     if (e.key === "Enter") { e.preventDefault(); void this.submit(); return; }
@@ -202,7 +182,6 @@ export class Terminal {
       e.preventDefault();
       this.print(`<span class="ps1">${esc(this.ps1)}</span>${esc(v)}^C`, "echo");
       this.input.value = ""; this.render(); this.hIdx = -1;
-      this.onInterrupt?.();
       return;
     }
     if (e.ctrlKey && e.key.toLowerCase() === "u") { e.preventDefault(); this.input.value = ""; this.render(); }

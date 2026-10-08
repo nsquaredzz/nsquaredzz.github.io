@@ -1,4 +1,4 @@
-// ANSI Shadow figlet. Kept as data so breakout can turn it into bricks.
+// ANSI Shadow figlet, kept as data so it can be rendered wide or stacked.
 export const BANNER_WIDE = [
   "███╗   ██╗██╗██╗   ██╗ █████╗ ████████╗██╗  ██╗    ███╗   ██╗ █████╗ ██╗██████╗ ",
   "████╗  ██║██║╚██╗ ██╔╝██╔══██╗╚══██╔══╝██║  ██║    ████╗  ██║██╔══██╗██║██╔══██╗",

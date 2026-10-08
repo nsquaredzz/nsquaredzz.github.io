@@ -67,10 +67,9 @@ function boot() {
   });
   const recent: string[] = [];
 
-  const ctx: Ctx = { term, fs, engine, lineHook: null, theme };
+  const ctx: Ctx = { term, fs, engine, theme };
 
   term.onRun = async (line) => {
-    if (ctx.lineHook) { ctx.lineHook(line); return; }
     const p = parse(line);
     if (!p.cmd) return;
     if (p.cmd.startsWith("~/")) { p.cmd = p.cmd.slice(2); }
@@ -85,7 +84,6 @@ function boot() {
     try { await cmd.run(p, ctx); }
     catch (e) { term.text(`${p.cmd}: ${(e as Error).message}`, "err"); }
   };
-  term.onInterrupt = () => { if (ctx.lineHook) { ctx.lineHook("quit"); } };
   term.onComplete = (line) => {
     const sp = line.lastIndexOf(" ");
     if (sp < 0) {
@@ -93,7 +91,6 @@ function boot() {
     }
     const head = line.slice(0, sp + 1), frag = line.slice(sp + 1);
     const cmd = head.trim().split(" ")[0];
-    if (cmd === "play") return ["snake", "breakout", "sql-golf"].filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "theme") return ["crt", "flat"].filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "open") return C.links.map((l) => l.label).filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "kill" || cmd === "sudo") return [];
@@ -119,7 +116,7 @@ function boot() {
   const chips = document.createElement("div");
   chips.className = "chips";
   chips.setAttribute("aria-label", "commands");
-  for (const c of ["help", "work", "projects", "lab", "contact", "blip", "drop", "play snake", "clear", "plain"]) {
+  for (const c of ["help", "work", "projects", "lab", "contact", "blip", "drop", "clear", "plain"]) {
     const b = document.createElement("button");
     b.className = "tag"; b.type = "button"; b.textContent = c;
     b.addEventListener("click", () => { void term.run(c); });

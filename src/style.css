@@ -199,14 +199,6 @@ body::after {
 .bubble.rust { color: var(--rust); border-color: var(--rust); }
 .bubble.rust:hover { background: var(--bg); color: var(--rust); }
 
-/* games */
-.game { display: block; margin: 8px 0; border: 1px solid var(--dim); background: var(--bg); image-rendering: pixelated; max-width: 100%; }
-.game-help { color: var(--dim); }
-.game:focus-visible { outline: 1px solid var(--green); }
-.sql-table { border-collapse: collapse; margin: 6px 0; }
-.sql-table th, .sql-table td { border: 1px solid var(--dim); padding: 1px 10px; text-align: left; }
-.sql-table th { color: var(--amber); font-weight: 700; }
-
 /* matrix */
 #matrix { position: fixed; inset: 0; z-index: 40; background: var(--bg); }
 

@@ -113,9 +113,7 @@
           "",
           "- schema linking matters more than the model. find the right three tables and a small model does fine.",
           "- generate, execute, repair. the repair loop is where the accuracy lives.",
-          "- evals on real questions from real users beat spider and bird. people ask weirder things.",
-          "",
-          "there's a tiny version of the problem in `play` > sql-golf."
+          "- evals on real questions from real users beat spider and bird. people ask weirder things."
         ]
       },
       {

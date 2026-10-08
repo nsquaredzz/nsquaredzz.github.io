@@ -29,23 +29,18 @@ useful urls while developing:
 src/
   main.ts              wires everything together, first screen, buttons, chips
   content.json         everything you read on the site. edit this, not the code
-  banner.ts            the ascii name banner (also the bricks in breakout)
+  banner.ts            the ascii name banner
   status.ts            uptime, blr clock, visitors, blips online
   plain.ts             the semantic html version
   style.css            one stylesheet, one font, seven colours
   terminal/
-    terminal.ts        output, prompt, history, tab completion, key capture, boxes
+    terminal.ts        output, prompt, history, tab completion, boxes
     parser.ts          "cmd arg --flag value" -> { cmd, args, flags }
     fs.ts              a read-only filesystem built from content.json
     commands.ts        the command registry, including the hidden ones
   sprite/
     sprite.ts          blip's pixels and how to draw them
     engine.ts          requestAnimationFrame loop, steering, bits, bubbles
-  games/
-    snake.ts
-    breakout.ts        bricks are the banner
-    sql.ts             a tiny sql evaluator (select/where/group/order/limit, aggregates)
-    sqlgolf.ts         the game on top of it
 public/
   fonts/               jetbrains mono, self-hosted
   resume.pdf           not in the repo yet. drop one here and the resume button starts working
@@ -80,7 +75,7 @@ commands live in `src/terminal/commands.ts` as one object each:
 }
 ```
 
-`p` is the parsed line (`args`, `flags`, `raw`). `ctx` has the terminal (`print`, `text`, `openBox`/`closeBox`, `capture` for games), the filesystem, and the blip engine (`spawn`, `kill`, `drop`, `panic`, `say`). tab completion for a command's arguments is in `main.ts` in `onComplete`.
+`p` is the parsed line (`args`, `flags`, `raw`). `ctx` has the terminal (`print`, `text`, `openBox`/`closeBox`), the filesystem, and the blip engine (`spawn`, `kill`, `drop`, `panic`, `say`). tab completion for a command's arguments is in `main.ts` in `onComplete`.
 
 ## blip
 
