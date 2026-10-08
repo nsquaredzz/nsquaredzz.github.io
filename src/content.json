@@ -1,0 +1,231 @@
+{
+  "name": "niyath nair",
+  "handle": "niyath@nair",
+  "location": "bengaluru",
+  "firstCommit": "2026-09-23T16:08:35Z",
+  "email": "",
+  "github": "https://github.com/nsquaredzz",
+  "resume": "/resume.pdf",
+  "bio": [
+    "founding research engineer at anthill ai. i build retrieval, knowledge graphs, agents and text-to-sql for llms.",
+    "before this: product analyst at slice, data science at jio. b.tech materials engineering, iit jodhpur. open to applied ai and research engineering roles."
+  ],
+  "status": "open to the next quest",
+  "links": [
+    { "label": "github", "url": "https://github.com/nsquaredzz" },
+    { "label": "resume", "url": "/resume.pdf" }
+  ],
+  "dirs": {
+    "work": [
+      {
+        "name": "anthill.txt",
+        "title": "anthill ai, founding research engineer",
+        "when": "2025 to now, bengaluru",
+        "body": [
+          "# anthill ai",
+          "founding research engineer. small team, so the job is wide.",
+          "",
+          "- retrieval for llms: chunking, hybrid search, rerankers, and the evals that tell you which of those actually mattered.",
+          "- knowledge graphs: pulling entities and relations out of messy enterprise docs and letting agents walk them.",
+          "- agents: tool-using loops that can be trusted to stop. most of the work is in the stopping.",
+          "- text-to-sql: natural language over real warehouses, where the schema has 400 tables and three of them are named `orders`.",
+          "",
+          "stack: python, typescript, google cloud, postgres, more sql than i expected."
+        ]
+      },
+      {
+        "name": "slice.txt",
+        "title": "slice, product analyst",
+        "when": "bengaluru",
+        "body": [
+          "# slice",
+          "product analyst at a fintech that moved fast and shipped weekly.",
+          "",
+          "- owned the metrics behind onboarding and credit decisions. built dashboards people opened without being asked.",
+          "- wrote a lot of sql. learned that most 'data problems' are definition problems.",
+          "- learned to argue with a number instead of a feeling."
+        ]
+      },
+      {
+        "name": "jio.txt",
+        "title": "jio platforms, data science intern",
+        "when": "two internships",
+        "body": [
+          "# jio platforms",
+          "two data science internships, at scale that makes you respect indexes.",
+          "",
+          "- time series and classification models on telecom data.",
+          "- first exposure to shipping a model instead of just training one."
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "name": "bi-gan.md",
+        "title": "bi-gan for lattice structures",
+        "tag": "thesis",
+        "body": [
+          "# bi-gan for lattice structure identification",
+          "final year project at iit jodhpur.",
+          "",
+          "trained a bidirectional gan to map between lattice structure images and a latent space, then used the encoder half for identification. the generator was the bait; the encoder was the point.",
+          "",
+          "later i reused the same architecture for portfolio stress testing: encode market regimes, sample from the latent space, decode plausible-but-unseen scenarios. same model, different physics.",
+          "",
+          "what i took from it: a model trained on crystal lattices will happily hallucinate a market crash. most ideas transfer if you squint."
+        ]
+      },
+      {
+        "name": "stacktherm.md",
+        "title": "stacktherm",
+        "tag": "c++",
+        "body": [
+          "# stacktherm",
+          "3d thermal simulator for stacked-chip unit cells. c++17 core, interactive 3d studio on top.",
+          "",
+          "- computes its own material inputs instead of asking you to look them up.",
+          "- the materials engineering degree finally paying rent.",
+          "",
+          "[github.com/nsquaredzz/stacktherm](https://github.com/nsquaredzz/stacktherm)"
+        ]
+      },
+      {
+        "name": "pralay-kavach.md",
+        "title": "pralay kavach",
+        "tag": "hackathon",
+        "body": [
+          "# pralay kavach",
+          "ai cyclone early warning. built at a hackathon in september 2026.",
+          "",
+          "- gemini for reasoning over bulletins, google earth engine for the satellite side, cloud run to hold it together.",
+          "- 'pralay' is sanskrit for deluge. 'kavach' is armour.",
+          "",
+          "[github.com/nsquaredzz/Hackathons](https://github.com/nsquaredzz/Hackathons)"
+        ]
+      },
+      {
+        "name": "text-to-sql.md",
+        "title": "text-to-sql, in production",
+        "tag": "anthill",
+        "body": [
+          "# text-to-sql",
+          "the thing i spend most of my week on. notes, not a writeup.",
+          "",
+          "- schema linking matters more than the model. find the right three tables and a small model does fine.",
+          "- generate, execute, repair. the repair loop is where the accuracy lives.",
+          "- evals on real questions from real users beat spider and bird. people ask weirder things.",
+          "",
+          "there's a tiny version of the problem in `play` > sql-golf."
+        ]
+      },
+      {
+        "name": "competitive-programming.md",
+        "title": "competitive programming",
+        "tag": "c++",
+        "body": [
+          "# competitive programming",
+          "codeforces, cses, atcoder solutions and a tested c++ algorithms library.",
+          "",
+          "mostly maintained for the same reason people run in the morning.",
+          "",
+          "[github.com/nsquaredzz/competitive-programming](https://github.com/nsquaredzz/competitive-programming)"
+        ]
+      }
+    ],
+    "lab": [
+      {
+        "name": "less-data.md",
+        "title": "learning from less",
+        "body": [
+          "# learning from less",
+          "the question i keep coming back to: how could machines learn more like brains do, from less data and with less compute?",
+          "",
+          "- a child sees maybe a few thousand cats. a vision model sees millions and still gets fooled by a sticker.",
+          "- current bets: better priors, active sampling, and memory that is not just a bigger context window.",
+          "",
+          "this is a lab file. it is allowed to be wrong."
+        ]
+      },
+      {
+        "name": "blip.md",
+        "title": "blip",
+        "body": [
+          "# blip",
+          "the robot wandering around this page. 12x12 pixels, two walk frames, one blink, one hop.",
+          "",
+          "- steering is three rules: wander, avoid the text column, go to the nearest bit.",
+          "- it looks at your cursor because every pet should.",
+          "- try: `blip --count 4`, `drop`, `kill blip`, `rm -rf /`."
+        ]
+      },
+      {
+        "name": "this-site.md",
+        "title": "this site",
+        "body": [
+          "# this site",
+          "vite, vanilla typescript, one json file for content, no framework.",
+          "",
+          "- the terminal has a parser, a fake filesystem and a command registry. adding a command is one object.",
+          "- the sprite engine is a requestanimationframe loop and some vectors.",
+          "- under 80kb of js. no gradients were harmed.",
+          "",
+          "[source on github](https://github.com/nsquaredzz/nsquaredzz.github.io)"
+        ]
+      }
+    ],
+    "notes": [
+      {
+        "name": "now.md",
+        "title": "now",
+        "body": [
+          "# now",
+          "- building retrieval and text-to-sql at anthill.",
+          "- reading about predictive coding and whether it is more than a metaphor.",
+          "- looking for the next applied ai or research engineering role. see `contact`."
+        ]
+      },
+      {
+        "name": "bengaluru.md",
+        "title": "bengaluru",
+        "body": [
+          "# bengaluru",
+          "filter coffee, traffic, weather that apologises for nothing. the best city to be stuck in a terminal in."
+        ]
+      }
+    ]
+  },
+  "hidden": [
+    {
+      "name": ".plan",
+      "body": [
+        "1. ship something small every week.",
+        "2. write down what broke.",
+        "3. do not buy a mechanical keyboard. (failed)"
+      ]
+    },
+    {
+      "name": ".bashrc",
+      "body": [
+        "alias coffee='echo brewing'",
+        "alias hire='sudo hire niyath'",
+        "export EDITOR=vim",
+        "export TZ=Asia/Kolkata"
+      ]
+    },
+    {
+      "name": ".secrets",
+      "body": [
+        "nice try. the real secrets are in `ls -a` of a different machine."
+      ]
+    }
+  ],
+  "fetchable": [
+    "~/projects/bi-gan.md",
+    "~/projects/stacktherm.md",
+    "~/projects/text-to-sql.md",
+    "~/projects/pralay-kavach.md",
+    "~/work/anthill.txt",
+    "~/lab/less-data.md",
+    "~/notes/now.md"
+  ]
+}
