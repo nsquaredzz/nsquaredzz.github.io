@@ -13,8 +13,8 @@ ALLOWED_ORIGINS = "https://nsquaredzz.github.io"
 [[d1_databases]]
 binding = "DB"
 database_name = "nsquaredzz-stats"
-# Filled in by `wrangler d1 create nsquaredzz-stats` when the worker is first deployed.
-database_id = "00000000-0000-0000-0000-000000000000"
+# From `wrangler d1 create nsquaredzz-stats`. An identifier, not a secret.
+database_id = "a17edde8-f8e0-4eeb-bef9-bec281528673"
 migrations_dir = "migrations"
 
 [observability]

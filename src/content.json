@@ -7,7 +7,7 @@
   "github": "https://github.com/nsquaredzz",
   "linkedin": "https://www.linkedin.com/in/niyath-nair-9601b0231",
   "resume": "/resume.pdf",
-  "statsApi": "",
+  "statsApi": "https://nsquaredzz-stats.nsquaredzz-stats.workers.dev",
   "bio": [
     "founding research engineer at anthill ai. i build retrieval, knowledge graphs, agents and text-to-sql for llms.",
     "before this: product analyst at slice, data science at jio. b.tech materials engineering, iit jodhpur. open to applied ai and research engineering roles."
@@ -204,6 +204,7 @@
           "- the terminal has a parser, a fake filesystem and a command registry. adding a command is one object.",
           "- the sprite engine is a requestanimationframe loop and some vectors.",
           "- under 80kb of js. no gradients were harmed.",
+          "- visitors are counted by a small worker of my own. no cookies, and no ip addresses are kept. `stats` shows the numbers.",
           "",
           "[source on github](https://github.com/nsquaredzz/nsquaredzz.github.io)"
         ]

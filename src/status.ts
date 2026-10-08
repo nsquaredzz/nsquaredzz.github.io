@@ -1,5 +1,5 @@
 import type { Content } from "./terminal/fs";
-import { recordVisit, statsOn } from "./visits";
+import { recordVisit } from "./visits";
 
 export function istNow(): Date {
   const d = new Date();
@@ -31,20 +31,11 @@ export function mountStatus(content: Content, blipCount: () => number): HTMLElem
   el.setAttribute("aria-live", "off");
   let visitors: string = "…";
   let allTime = "";
-  if (statsOn) {
-    // our own backend: unique people today, and visits so far. see src/visits.ts
-    void recordVisit().then((c) => {
-      visitors = c ? String(c.today) : "–";
-      allTime = c ? String(c.total) : "";
-    });
-  } else {
-    // until the backend is connected: a free third-party counter of page loads, one key per day
-    const day = istNow().toISOString().slice(0, 10);
-    fetch(`https://abacus.jasoncameron.dev/hit/nsquaredzz-site/visits-${day}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((j) => { visitors = String(j.value ?? 1); })
-      .catch(() => { visitors = "1 (you)"; });
-  }
+  // our own backend (worker/): unique people today, and visits so far. see src/visits.ts
+  void recordVisit().then((c) => {
+    visitors = c ? String(c.today) : "–";
+    allTime = c ? String(c.total) : "";
+  });
   const tick = () => {
     const d = istNow();
     const clock = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}`;

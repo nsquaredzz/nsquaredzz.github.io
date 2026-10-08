@@ -129,7 +129,7 @@ the page template and the markdown handling are in `scripts/build-posts.mjs`. th
 
 `worker/` is a small backend, a Cloudflare Worker with a database, that counts visitors. It has its own [README](worker/README.md) with what is counted, how to test it and how to deploy it.
 
-- `statsApi` in `src/content.json` is the worker's address. While it is empty the site falls back to a third-party page-load counter and the `stats` command stays hidden.
+- `statsApi` in `src/content.json` is the worker's address. If it is empty, nothing is counted and the `stats` command stays hidden.
 - the corner of the terminal shows people today and visits so far. `stats` prints the same.
 - `/stats/` is the private dashboard: history, pages, referrers and countries. It opens with the admin token.
 - `notrack` in the terminal, or the checkbox on the dashboard, stops your own browser from being counted.
