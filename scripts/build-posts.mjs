@@ -131,7 +131,7 @@ for (const f of files) {
   const { meta, body } = frontmatter(fs.readFileSync(path.join(postsDir, f), "utf8"));
   if (meta.draft === "true") continue;
   const { html, toc } = render(body, slug);
-  const prose = body.split("\n").filter((l) => !l.startsWith("|") && !l.startsWith(":::")).join(" ").replace(/\$\$[\s\S]+?\$\$/g, " ").replace(/\$[^$]+\$/g, " x ");
+  const prose = body.split("\n").filter((l) => !l.startsWith("|") && !l.startsWith(":::") && !l.startsWith("![")).join(" ").replace(/\$\$[\s\S]+?\$\$/g, " ").replace(/\$[^$]+\$/g, " x ");
   const words = prose.split(/\s+/).length;
   const minutes = Math.max(1, Math.round(words / 220));
   const post = { slug, title: meta.title ?? slug, subtitle: meta.subtitle ?? "", date: meta.date ?? "", summary: meta.summary ?? "", tag: meta.tag ?? "", minutes, sections: toc.filter((t) => t.lvl === 2 && t.num).map((t) => t.plain) };

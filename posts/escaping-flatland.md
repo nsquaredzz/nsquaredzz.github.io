@@ -26,6 +26,8 @@ A modern AI system can summarize ten papers in seconds and still fail to remembe
 
 If your memory stack lives in Euclidean embeddings only, then deep retrieval eventually behaves like semantic averaging. Distances lose meaning as branching depth increases, neighborhoods blur, and graph propagation pushes nodes toward the same latent center. The result is a system that feels intelligent at the surface but brittle under sustained reasoning.
 
+![The same 190-node tree drawn twice. Left: in the flat plane, with depth d placed on a circle of radius d, the 96 leaves end up 0.39 edge lengths apart, closer to each other than to their own parents. Right: in the Poincare disk every edge has the same hyperbolic length, 1.25, and the nearest leaves are still 2.26 apart. The leaves look crowded at the rim only because the picture is Euclidean; measured with the disk's own distance they are not.](tree.webp)
+
 ## Where the SOTA Is Right Now
 
 Today's best production stacks are no longer "vector search + prompt template." They are layered systems: dense retrieval, lexical signals, reranking, graph side channels, metadata filters, and often an agent loop on top. GraphRAG variants, multihop retrievers, and memory-augmented agents have clearly improved recall and answer grounding versus first-generation RAG.
@@ -39,6 +41,8 @@ But the dominant geometry is still Euclidean. Even when graph methods are used, 
 The first failure is **relation collapse**. In high branching domains, Euclidean neighborhoods become overloaded. Concepts that should be separated by depth or role become topologically crowded. Retrieval then surfaces "similar" chunks that are semantically adjacent but structurally wrong.
 
 The second failure is **over-smoothing** in graph propagation. Repeated linear message passing reduces representational variance. Deep stacks then lose node identity, especially for fine-grained leaves. This is fatal in contextual memory systems where preserving distinct provenance paths is mandatory.
+
+![Over-smoothing, measured. Plain mean-over-neighbours aggregation with self loops, no weights and no nonlinearity, on a 382-node tree with random 64-dimensional features; lines are means over 10 seeds. Left: the variance of features across nodes falls to 18 % of its starting value after 4 layers and under 5 % after 32, for both kinds of features (the two curves coincide). Right: mean pairwise cosine distance falls from 0.36 to 0.09 in 4 layers when features are non-negative, as after a ReLU, but barely moves for zero-mean features, where the vectors shrink together without lining up. This is a toy measurement of the Euclidean failure mode only. It does not test the hyperbolic model.](oversmoothing.webp)
 
 The third failure is **missing directional relation**. Most embeddings encode strength well but encode relation angle weakly. They can tell you two concepts are close, but not how that closeness is oriented in a relational manifold. For reasoning, this missing direction is exactly where many errors are born.
 
@@ -75,6 +79,10 @@ Hyperbolic distance grows rapidly near the boundary. That gives us exactly what 
 
 In other words, the geometry naturally matches the branching law of contextual knowledge. We do not need to fake hierarchy with extra bookkeeping if the manifold already encodes it.
 
+![Why the rim has room. The circumference of a hyperbolic circle of radius r is $2\pi \sinh r$, which grows exponentially, like the number of nodes at depth r of a tree. A flat circle grows only linearly, so a binary tree outgrows it at depth 5 and a ternary tree at depth 3.](capacity.webp)
+
+![Equation 2, plotted. Left: hyperbolic distance from the centre is $2\,\mathrm{artanh}\,r$, which diverges as a point approaches the rim. Right: two points at the same radius and a fixed angle apart. Their Euclidean distance (dotted) stays below 1.5, while their hyperbolic distance (solid) grows without bound, even when they are only 5° apart.](distance.webp)
+
 ## Mobius Message Passing: Defeating Over-Smoothing
 
 Standard GNN aggregation collapses identity in deeper layers. Because Euclidean addition exits the disk, the approach uses Einstein gyrovector addition via Mobius transformations.
@@ -92,6 +100,8 @@ $$
 Mobius addition is conformal, so angular structure is preserved. Phase difference drives interaction, which means relation orientation remains active during message fusion. Instead of collapsing to a simple average, concepts rotate and translate along geodesics.
 
 This is the key anti-collapse behavior. We still aggregate information, but we do it in a way that respects local geometry and node identity.
+
+![Equation 3, computed. Left: for 600 random pairs of points in the disk, the ordinary sum u + v lands outside the disk 38 % of the time, while the Mobius sum never does. Right: a polar grid (dim) and its image under $z \mapsto a \oplus_M z$ (colour). The centre moves to a, circles stay circles, and every crossing stays a right angle, which is what conformal means.](mobius.webp)
 
 ## Contrastive Optimization on the Manifold
 

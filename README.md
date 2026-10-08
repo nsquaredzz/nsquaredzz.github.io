@@ -108,6 +108,7 @@ Argument.
 - `##` and `###` headings are numbered automatically and `##` headings make the contents list. figures are numbered automatically.
 - a markdown blockquote is a pull quote; its last paragraph is shown as the attribution.
 - `## Notes`, `## Further reading` and `## References` are left unnumbered.
+- computed figures have their script in `scripts/figures/` (for example `python3 scripts/figures/escaping_flatland.py`), so every plot can be regenerated.
 - `draft: true` in the front matter keeps a post out of the build.
 - `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
 
