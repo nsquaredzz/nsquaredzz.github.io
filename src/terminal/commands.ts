@@ -3,6 +3,7 @@ import type { FS, FileEntry } from "./fs";
 import { Terminal, esc } from "./terminal";
 import type { Engine } from "../sprite/engine";
 import { istHour, uptime } from "../status";
+import posts from "../generated/posts.json";
 
 export interface Ctx {
   term: Terminal;
@@ -31,7 +32,7 @@ export function catFile(term: Terminal, f: FileEntry, path?: string) {
     if (line.startsWith("# ")) continue;
     if (!line.trim()) { blank = true; continue; }
     const html = esc(line)
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, t, u) => `<a href="${u}" target="_blank" rel="noopener">${t}</a>`)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, t, u) => (u.startsWith("/") ? `<a href="${u}">${t}</a>` : `<a href="${u}" target="_blank" rel="noopener">${t}</a>`))
       .replace(/`([^`]+)`/g, "<code>$1</code>");
     const el = line.startsWith("- ") ? term.print("• " + html.slice(2), "li") : term.print(html);
     if (blank) { el.classList.add("gap"); blank = false; }
@@ -162,6 +163,30 @@ export const commands: Command[] = [
   { name: "lab", desc: "half-finished thoughts", group: "shortcuts", run(_p, ctx) { catDir(ctx.term, "~/lab", ctx); } },
   { name: "notes", desc: "now, and other notes", hidden: true, run(_p, ctx) { catDir(ctx.term, "~/notes", ctx); } },
   { name: "contact", desc: "how to reach me", group: "shortcuts", run(_p, ctx) { catFile(ctx.term, ctx.fs.read("~/contact.txt")!); } },
+  {
+    name: "blog", desc: "research write-ups, paper style", group: "shortcuts",
+    run(_p, ctx) {
+      const t = ctx.term;
+      if (!posts.length) { t.text("nothing published yet.", "dim"); return; }
+      for (const p of posts) {
+        t.openBox(p.title, `${p.date}  ${p.minutes} min`);
+        if (p.subtitle) t.text(p.subtitle);
+        t.text(p.summary, "dim").classList.add("gap");
+        t.print(`<a href="/blog/${esc(p.slug)}/">read the paper →</a>   <span class="dim">or</span> <code>read ${esc(p.slug)}</code>`).classList.add("gap");
+        t.closeBox();
+      }
+    },
+  },
+  {
+    name: "read", desc: "open a post as a paper", usage: "read <post>", group: "files",
+    run(p, ctx) {
+      const a = (p.args[0] ?? "").replace(/^~?\/?(blog\/)?/, "").replace(/\.md$/, "");
+      const hit = posts.find((x) => x.slug === a) ?? (a ? posts.find((x) => x.slug.startsWith(a)) : posts.length === 1 ? posts[0] : undefined);
+      if (!hit) { ctx.term.print(`read: which post? ${posts.map((x) => `<code>${esc(x.slug)}</code>`).join(", ") || "none yet"}`, "dim"); return; }
+      ctx.term.text(`opening ${hit.title}…`, "dim");
+      setTimeout(() => (location.href = `/blog/${hit.slug}/`), 250);
+    },
+  },
   { name: "resume", desc: "open resume.pdf", group: "shortcuts", run(_p, ctx) { openResume(ctx.term, ctx); } },
   {
     name: "plain", desc: "plain html version of this site", group: "shortcuts",

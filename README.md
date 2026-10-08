@@ -32,6 +32,7 @@ src/
   banner.ts            the ascii name banner
   status.ts            uptime, blr clock, visitors, blips online
   plain.ts             the semantic html version
+  paper.ts, paper.css  the paper-style page used by blog posts
   style.css            one stylesheet, one font, seven colours
   terminal/
     terminal.ts        output, prompt, history, tab completion, boxes
@@ -41,7 +42,10 @@ src/
   sprite/
     sprite.ts          blip's pixels and how to draw them
     engine.ts          requestAnimationFrame loop, steering, bits, bubbles
+posts/                 blog posts as markdown, one file per post
+scripts/build-posts.mjs  markdown + LaTeX -> blog/<slug>/index.html and src/generated/posts.json
 public/
+  blog/<slug>/         figures for a post
   fonts/               jetbrains mono, self-hosted
   resume.pdf           not in the repo yet. drop one here and the resume button starts working
 ```
@@ -58,6 +62,54 @@ everything on the site comes from `src/content.json`.
 - `firstCommit`: what `uptime` counts from.
 
 no code changes needed. the plain version renders from the same file.
+
+## write a blog post
+
+posts are markdown files in `posts/`. each one becomes a paper-style page at `/blog/<filename>/`, a file in `~/blog/` inside the terminal, and an entry in the `blog` command and the side pane.
+
+```
+---
+title: A title
+subtitle: One line under the title.
+date: 2026-10-08
+tag: research
+summary: Two sentences. Shown in the terminal and on the blog index.
+---
+
+:::abstract
+The abstract.
+:::
+
+## A section
+
+Inline maths $e^{i\pi} = -1$ and display maths:
+
+$$ \lVert g - h \rVert_\infty $$
+
+:::theorem Theorem 1 (name).
+Statement.
+:::
+
+:::proof
+Argument.
+:::
+
+:::tbl **Table 1.** A caption.
+| a | b |
+|---|---|
+| 1 | 2 |
+:::
+
+![A caption. The image lives in public/blog/<filename>/.](figure.webp)
+```
+
+- maths is LaTeX, rendered to html by katex at build time. no maths javascript is shipped. a typo in the LaTeX fails the build with the offending snippet.
+- blocks: `abstract`, `theorem`, `proposition`, `lemma`, `definition`, `proof`, `remark`, `note`, `tbl`.
+- `##` and `###` headings are numbered automatically and `##` headings make the contents list. figures are numbered automatically.
+- `draft: true` in the front matter keeps a post out of the build.
+- `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
+
+the page template and the markdown handling are in `scripts/build-posts.mjs`. the look is `src/paper.css`.
 
 ## add a command
 

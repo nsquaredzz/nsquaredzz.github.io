@@ -8,8 +8,32 @@ import { commands, find, suggest, catFile, type Ctx } from "./terminal/commands"
 import { Engine } from "./sprite/engine";
 import { mountStatus, loginLine } from "./status";
 import { renderPlain } from "./plain";
+import posts from "./generated/posts.json";
 
 const C = content as Content;
+
+// the blog is a directory like any other: one file per post, built from posts/*.md
+const blogFiles = posts.map((p) => ({
+  name: `${p.slug}.md`,
+  title: p.title,
+  when: p.date,
+  tag: `${p.minutes} min`,
+  body: [
+    `# ${p.title}`,
+    p.subtitle,
+    "",
+    p.summary,
+    "",
+    ...p.sections.map((x, i) => `- ${i + 1}. ${x.toLowerCase()}`),
+    "",
+    `[read the full paper](/blog/${p.slug}/)  ·  or type \`read ${p.slug}\``,
+  ],
+}));
+if (blogFiles.length) {
+  const { work, projects, ...rest } = C.dirs;
+  C.dirs = { work, projects, blog: blogFiles, ...rest };
+  C.fetchable = [...blogFiles.map((f) => `~/blog/${f.name}`), ...C.fetchable];
+}
 const app = document.getElementById("app")!;
 const params = new URLSearchParams(location.search);
 
@@ -99,6 +123,7 @@ function boot() {
     }
     const head = line.slice(0, sp + 1), frag = line.slice(sp + 1);
     const cmd = head.trim().split(" ")[0];
+    if (cmd === "read") return posts.map((p) => p.slug).filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "theme") return ["crt", "flat"].filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "open") return C.links.map((l) => l.label).filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "kill" || cmd === "sudo") return [];
@@ -108,7 +133,7 @@ function boot() {
   // --- buttons ---
   const tags = head.querySelector(".tags")!;
   const buttons: [string, string, boolean][] = [
-    ["~/plain", "plain", true], ["work", "work", false], ["projects", "projects", false],
+    ["~/plain", "plain", true], ["work", "work", false], ["projects", "projects", false], ["blog", "blog", false],
     ["lab", "lab", false], ["contact", "contact", false], ["resume.pdf", "open resume.pdf", false],
   ];
   for (const [label, cmd, fill] of buttons) {
@@ -124,7 +149,7 @@ function boot() {
   const chips = document.createElement("div");
   chips.className = "chips";
   chips.setAttribute("aria-label", "commands");
-  for (const c of ["help", "work", "projects", "lab", "contact", "blip", "drop", "clear", "plain"]) {
+  for (const c of ["help", "work", "projects", "blog", "lab", "contact", "blip", "drop", "clear", "plain"]) {
     const b = document.createElement("button");
     b.className = "tag"; b.type = "button"; b.textContent = c;
     b.addEventListener("click", () => { void term.run(c); });
@@ -141,7 +166,7 @@ function boot() {
   side.setAttribute("aria-label", "quick links");
   const tree = Object.entries(C.dirs).map(([d, files]) =>
     `<div class="t-dir"><button class="t-link d" data-cmd="cd ~/${d}">${esc(d)}/</button></div>` +
-    files.map((f) => `<div class="t-file"><button class="t-link f" data-cmd="cat ~/${d}/${f.name}">${esc(f.name)}</button><span class="t-meta">${esc(f.tag ?? f.when ?? "")}</span></div>`).join("")
+    files.map((f) => `<div class="t-file"><button class="t-link f" data-cmd="${d === "blog" ? `read ${f.name.replace(/\.md$/, "")}` : `cat ~/${d}/${f.name}`}">${esc(f.name)}</button><span class="t-meta">${esc(f.tag ?? f.when ?? "")}</span></div>`).join("")
   ).join("");
   const now = C.dirs.notes?.find((f) => f.name === "now.md");
   side.innerHTML =

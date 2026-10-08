@@ -33,11 +33,12 @@ export function renderPlain(root: HTMLElement, c: Content) {
     <p class="lede">${esc(c.location)} · <span class="status-dot">●</span> ${esc(c.status)}</p>
     ${c.bio.map((b) => `<p>${esc(b)}</p>`).join("")}
     <nav class="nav" aria-label="sections">
-      <a href="#work">work</a><a href="#projects">projects</a><a href="#lab">lab</a><a href="#notes">notes</a><a href="#contact">contact</a>
+      <a href="#work">work</a><a href="#projects">projects</a>${c.dirs.blog ? `<a href="#blog">blog</a>` : ""}<a href="#lab">lab</a><a href="#notes">notes</a><a href="#contact">contact</a>
     </nav>
   </header>
   ${section("work", "work", c.dirs.work)}
   ${section("projects", "projects", c.dirs.projects)}
+  ${c.dirs.blog ? `<section id="blog" aria-labelledby="blog-h"><h2 id="blog-h">blog</h2>${c.dirs.blog.map((f) => `<article><h3><a href="/blog/${f.name.replace(/\.md$/, "")}/">${esc(f.title ?? f.name)}</a></h3><p class="when">${esc([f.when, f.tag].filter(Boolean).join(" · "))}</p><p>${esc(f.body[3] ?? "")}</p></article>`).join("")}</section>` : ""}
   ${section("lab", "lab", c.dirs.lab)}
   ${section("notes", "notes", c.dirs.notes)}
   <section id="contact" aria-labelledby="contact-h">
