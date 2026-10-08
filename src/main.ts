@@ -20,6 +20,7 @@ if (params.has("plain")) {
 }
 
 function isMobile() { return innerWidth < 768; }
+function hasSide() { return innerWidth >= 1280; }
 
 function boot() {
   // theme
@@ -46,6 +47,7 @@ function boot() {
   const term = new Terminal(termRoot);
   const fs = new FS(C);
 
+  const side = document.createElement("aside"); // filled in below; the engine's bounds() reads its rect
   const engine = new Engine({
     reduced: REDUCED,
     mobile: isMobile,
@@ -53,7 +55,11 @@ function boot() {
       if (isMobile()) return { x: 8, y: innerHeight - 150, w: innerWidth - 16, h: 70 };
       const r = termRoot.getBoundingClientRect();
       const left = Math.min(r.right + 24, innerWidth - 120);
-      return { x: left, y: 70, w: Math.max(80, innerWidth - left - 24), h: innerHeight - 100 };
+      const sideLeft = hasSide() ? side.getBoundingClientRect().left - 24 : innerWidth - 24;
+      if (sideLeft - left >= 140) return { x: left, y: 70, w: sideLeft - left, h: innerHeight - 100 };
+      // not enough room between the columns: use the strip under the side pane
+      const top = hasSide() ? side.getBoundingClientRect().bottom + 20 : 70;
+      return { x: left, y: Math.min(top, innerHeight - 120), w: Math.max(80, innerWidth - left - 24), h: Math.max(90, innerHeight - top - 30) };
     },
     onFetch: (b) => {
       const pool = C.fetchable.filter((p) => !recent.includes(p));
@@ -128,11 +134,38 @@ function boot() {
   const status = mountStatus(C, () => engine.count);
   if (isMobile()) termRoot.prepend(status); else app.appendChild(status);
 
+  // right pane on wide screens: file tree, now, contact
+  side.className = "side";
+  side.setAttribute("aria-label", "quick links");
+  const tree = Object.entries(C.dirs).map(([d, files]) =>
+    `<div class="t-dir"><button class="t-link d" data-cmd="cd ~/${d}">${esc(d)}/</button></div>` +
+    files.map((f) => `<div class="t-file"><button class="t-link f" data-cmd="cat ~/${d}/${f.name}">${esc(f.name)}</button><span class="t-meta">${esc(f.tag ?? f.when ?? "")}</span></div>`).join("")
+  ).join("");
+  const now = C.dirs.notes?.find((f) => f.name === "now.md");
+  side.innerHTML =
+    `<section class="box"><span class="box-title">~/</span><span class="box-meta">click to cat</span>${tree}</section>` +
+    (now ? `<section class="box"><span class="box-title">now</span>${now.body.filter((l) => l.startsWith("- ")).map((l) => `<div class="line li">• ${esc(l.slice(2)).replace(/`([^`]+)`/g, "<code>$1</code>")}</div>`).join("")}</section>` : "") +
+    `<section class="box"><span class="box-title">contact</span>` +
+      (C.email ? `<div class="line"><a href="mailto:${esc(C.email)}">${esc(C.email)}</a></div>` : "") +
+      `<div class="line"><a href="${C.github}" target="_blank" rel="noopener">${esc(C.github.replace("https://", ""))}</a></div>` +
+      `<div class="line"><button class="t-link f" data-cmd="open resume.pdf">resume.pdf</button></div>` +
+      `<div class="line"><button class="t-link f" data-cmd="sudo hire niyath">sudo hire niyath</button></div>` +
+    `</section>` +
+    `<section class="box"><span class="box-title">blip</span>` +
+      `<div class="line dim">a pixel robot lives on this page. drop a bit and it brings back a file.</div>` +
+      `<div class="line"><button class="t-link f" data-cmd="blip">blip</button> <button class="t-link f" data-cmd="drop">drop</button> <button class="t-link f" data-cmd="blip --big">blip --big</button></div>` +
+    `</section>`;
+  side.addEventListener("click", (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>("[data-cmd]");
+    if (b?.dataset.cmd) void term.type(b.dataset.cmd, 12);
+  });
+  app.appendChild(side);
+
   // --- first visit ---
   let seen = false;
   try { seen = localStorage.getItem("seen") === "1"; localStorage.setItem("seen", "1"); } catch { /* ok */ }
-  const blipsWanted = Number(params.get("blips") ?? 0);
-  if (blipsWanted) for (let i = 0; i < blipsWanted; i++) engine.spawn();
+  const blipsWanted = Number(params.get("blips") ?? (isMobile() ? 0 : 1));
+  for (let i = 0; i < blipsWanted; i++) engine.spawn();
   if (!seen || params.has("help")) term.run("help").then(() => requestAnimationFrame(() => scrollTo(0, 0)));
   if (!isMobile()) term.focus();
 }

@@ -152,7 +152,7 @@ export class Engine {
 
   private click(e: MouseEvent) {
     const t = e.target as HTMLElement;
-    if (t.closest(".term, .bubble, .chips, .status, button, a")) return;
+    if (t.closest(".term, .side, .bubble, .chips, .status, button, a")) return;
     const r = this.opts.bounds();
     const inside = e.clientX >= r.x && e.clientX <= r.x + r.w && e.clientY >= r.y && e.clientY <= r.y + r.h;
     let near = false;
