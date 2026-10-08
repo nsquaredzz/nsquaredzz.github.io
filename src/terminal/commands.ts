@@ -4,12 +4,13 @@ import { Terminal, esc } from "./terminal";
 import type { Engine } from "../sprite/engine";
 import { istHour, uptime } from "../status";
 import posts from "../generated/posts.json";
+import { type Theme, setTheme, nextTheme, parseTheme } from "../theme";
 
 export interface Ctx {
   term: Terminal;
   fs: FS;
   engine: Engine;
-  theme: "crt" | "flat";
+  theme: Theme;
 }
 
 export interface Command {
@@ -147,13 +148,12 @@ export const commands: Command[] = [
     run(_p, ctx) { ctx.term.history.forEach((h, i) => ctx.term.text(`${String(i + 1).padStart(4)}  ${h}`)); },
   },
   {
-    name: "theme", desc: "crt or flat", usage: "theme [crt|flat]", group: "basics",
+    name: "theme", desc: "crt, flat or light", usage: "theme [crt|flat|light]", group: "basics",
     run(p, ctx) {
-      const want = (p.args[0] as Ctx["theme"]) ?? (ctx.theme === "crt" ? "flat" : "crt");
-      if (want !== "crt" && want !== "flat") { ctx.term.text("theme: crt or flat", "err"); return; }
-      ctx.theme = want;
-      document.documentElement.dataset.theme = want;
-      try { localStorage.setItem("theme", want); } catch { /* ok */ }
+      // no argument steps through the three; "dark" goes back to the dark look last used
+      const want = p.args[0] ? parseTheme(p.args[0]) : nextTheme(ctx.theme);
+      if (!want) { ctx.term.text("theme: crt, flat or light", "err"); return; }
+      setTheme(want);   // main.ts keeps ctx.theme in step through the themechange event
       ctx.term.text(`theme: ${want}`, "dim");
     },
   },

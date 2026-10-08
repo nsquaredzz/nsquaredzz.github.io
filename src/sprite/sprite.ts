@@ -3,14 +3,21 @@
  *   C cream head, A amber body, D dim legs, d dim antenna stem, r rust antenna tip.
  * Eyes are drawn separately so they can look around and blink.
  */
-export const PAL: Record<string, string> = {
-  C: "#e9dfc8",
-  A: "#ffb23e",
-  D: "#7a7160",
-  d: "#7a7160",
-  r: "#d9643a",
-  G: "#b6f23a",
-};
+const DARK: Record<string, string> = { C: "#e9dfc8", A: "#ffb23e", D: "#7a7160", d: "#7a7160", r: "#d9643a", G: "#b6f23a" };
+// on paper a cream head would vanish, so blip wears the dark page colour and keeps its green eyes
+const LIGHT: Record<string, string> = { C: "#2a251d", A: "#b86f00", D: "#6a6253", d: "#6a6253", r: "#aa4018", G: "#b6f23a" };
+export const PAL: Record<string, string> = { ...DARK };
+
+/** What the stage paints besides blip: the page, a hairline, the trail and the bits. */
+export const SCENE = { bg: "#0b0a08", rule: "#2a2620", dot: "122,113,96", bit: "#b6f23a", bitGlow: 8 };
+
+/** Switch blip and the stage between the dark and the light theme. */
+export function setScene(light: boolean) {
+  Object.assign(PAL, light ? LIGHT : DARK);
+  Object.assign(SCENE, light
+    ? { bg: "#f5efe2", rule: "#d6ccb6", dot: "106,98,83", bit: "#387000", bitGlow: 0 }
+    : { bg: "#0b0a08", rule: "#2a2620", dot: "122,113,96", bit: "#b6f23a", bitGlow: 8 });
+}
 
 const BODY = [
   "....r.......",

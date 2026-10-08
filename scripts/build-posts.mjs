@@ -121,6 +121,7 @@ const head = (title, desc, url) => `<!doctype html>
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://nsquaredzz.github.io${url}">
 <meta name="theme-color" content="#0b0a08">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/jetbrains-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -128,7 +129,7 @@ const head = (title, desc, url) => `<!doctype html>
 
 const topbar = (crumb) => `<header class="p-top">
   <a class="p-crumb" href="/"><span class="ps1">niyath@nair:~/blog $</span> ${crumb}</a>
-  <nav aria-label="site"><a href="/">terminal</a><a href="/blog/">blog</a><a href="/?plain">plain</a></nav>
+  <nav aria-label="site"><a href="/">terminal</a><a href="/blog/">blog</a><a href="/?plain">plain</a><button class="p-theme" type="button">light</button></nav>
 </header>`;
 
 fs.rmSync(outDir, { recursive: true, force: true });

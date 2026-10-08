@@ -1,3 +1,4 @@
+import "./theme.css";
 import "./style.css";
 import content from "./content.json";
 import { BANNER_WIDE, BANNER_SMALL } from "./banner";
@@ -9,6 +10,8 @@ import { Engine } from "./sprite/engine";
 import { mountStatus, loginLine } from "./status";
 import { renderPlain } from "./plain";
 import posts from "./generated/posts.json";
+import { initTheme, isLight, otherSide } from "./theme";
+import { setScene } from "./sprite/sprite";
 
 const C = content as Content;
 
@@ -36,6 +39,7 @@ if (blogFiles.length) {
 }
 const app = document.getElementById("app")!;
 const params = new URLSearchParams(location.search);
+const startTheme = initTheme();   // before anything is drawn, in the terminal and in plain mode alike
 
 if (params.has("plain")) {
   renderPlain(app, C);
@@ -47,10 +51,7 @@ function isMobile() { return innerWidth < 768; }
 function hasSide() { return innerWidth >= 1280; }
 
 function boot() {
-  // theme
-  let theme: Ctx["theme"] = "crt";
-  try { theme = (localStorage.getItem("theme") as Ctx["theme"]) || "crt"; } catch { /* ok */ }
-  document.documentElement.dataset.theme = theme;
+  setScene(isLight());
 
   const termRoot = document.createElement("div");
   termRoot.className = "term";
@@ -99,7 +100,11 @@ function boot() {
   });
   const recent: string[] = [];
 
-  const ctx: Ctx = { term, fs, engine, theme };
+  const ctx: Ctx = { term, fs, engine, theme: startTheme };
+  addEventListener("themechange", (e) => {
+    ctx.theme = (e as CustomEvent<Ctx["theme"]>).detail;
+    setScene(isLight());   // blip and its bits change clothes with the page
+  });
 
   term.onRun = async (line) => {
     const p = parse(line);
@@ -124,7 +129,7 @@ function boot() {
     const head = line.slice(0, sp + 1), frag = line.slice(sp + 1);
     const cmd = head.trim().split(" ")[0];
     if (cmd === "read") return posts.map((p) => p.slug).filter((g) => g.startsWith(frag)).map((g) => head + g);
-    if (cmd === "theme") return ["crt", "flat"].filter((g) => g.startsWith(frag)).map((g) => head + g);
+    if (cmd === "theme") return ["crt", "flat", "light", "dark"].filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "open") return C.links.map((l) => l.label).filter((g) => g.startsWith(frag)).map((g) => head + g);
     if (cmd === "kill" || cmd === "sudo") return [];
     return fs.complete(frag).map((f) => head + f);
@@ -144,6 +149,18 @@ function boot() {
     b.addEventListener("click", () => { void term.type(cmd, 18); });
     tags.appendChild(b);
   }
+  // light/dark switch: it names the side it leads to, and runs the command like every other button
+  const sides: HTMLButtonElement[] = [];
+  const sideButton = (run: (cmd: string) => void) => {
+    const b = document.createElement("button");
+    b.className = "tag"; b.type = "button";
+    b.addEventListener("click", () => run(`theme ${otherSide()}`));
+    sides.push(b);
+    return b;
+  };
+  const labelSides = () => { for (const b of sides) { b.textContent = otherSide(); b.setAttribute("aria-label", `switch to the ${otherSide()} theme`); } };
+  addEventListener("themechange", labelSides);
+  tags.appendChild(sideButton((cmd) => { void term.type(cmd, 18); }));
 
   // mobile chips
   const chips = document.createElement("div");
@@ -155,6 +172,8 @@ function boot() {
     b.addEventListener("click", () => { void term.run(c); });
     chips.appendChild(b);
   }
+  chips.appendChild(sideButton((cmd) => { void term.run(cmd); }));
+  labelSides();
   app.appendChild(chips);
 
   // status (top right on desktop, above everything on mobile)

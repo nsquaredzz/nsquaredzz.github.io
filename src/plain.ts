@@ -1,5 +1,6 @@
 import type { Content, FileEntry } from "./terminal/fs";
 import { esc } from "./terminal/terminal";
+import { wireToggle } from "./theme";
 
 function inline(s: string): string {
   return esc(s)
@@ -34,6 +35,7 @@ export function renderPlain(root: HTMLElement, c: Content) {
     ${c.bio.map((b) => `<p>${esc(b)}</p>`).join("")}
     <nav class="nav" aria-label="sections">
       <a href="#work">work</a><a href="#projects">projects</a>${c.dirs.blog ? `<a href="#blog">blog</a>` : ""}<a href="#lab">lab</a><a href="#notes">notes</a><a href="#contact">contact</a>
+      <button class="t-link" type="button" data-theme-toggle></button>
     </nav>
   </header>
   ${section("work", "work", c.dirs.work)}
@@ -52,4 +54,5 @@ export function renderPlain(root: HTMLElement, c: Content) {
   </section>
   <a class="back" href="/">← back to the terminal</a>
 </main>`;
+  wireToggle(root.querySelector<HTMLElement>("[data-theme-toggle]")!);
 }

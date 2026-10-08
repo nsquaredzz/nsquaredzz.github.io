@@ -1,4 +1,4 @@
-import { drawBlip, SPRITE, PAL } from "./sprite";
+import { drawBlip, SPRITE, SCENE } from "./sprite";
 
 export interface Rect { x: number; y: number; w: number; h: number; }
 
@@ -301,16 +301,16 @@ export class Engine {
     // on mobile the playground is a floor strip above the chips; give it a solid ground so text never shows through
     if (this.opts.mobile()) {
       const r = this.opts.bounds();
-      c.fillStyle = "#0b0a08";
+      c.fillStyle = SCENE.bg;
       c.fillRect(0, r.y - 10, W, H - r.y + 10);
-      c.fillStyle = "#2a2620";
+      c.fillStyle = SCENE.rule;
       c.fillRect(0, r.y + r.h + 2, W, 1);
     }
 
     // trail dots
     for (const d of this.dots) {
       const a = 1 - (now - d.t) / 1600;
-      c.fillStyle = `rgba(122,113,96,${(a * 0.9).toFixed(2)})`;
+      c.fillStyle = `rgba(${SCENE.dot},${(a * 0.9).toFixed(2)})`;
       c.fillRect(Math.round(d.x), Math.round(d.y), 2, 2);
     }
 
@@ -319,8 +319,8 @@ export class Engine {
     c.textAlign = "center"; c.textBaseline = "middle";
     for (const bit of this.bits) {
       const bob = Math.sin(now / 250 + bit.x) * 2;
-      c.fillStyle = PAL.G;
-      c.shadowColor = "rgba(182,242,58,.7)"; c.shadowBlur = 8;
+      c.fillStyle = SCENE.bit;
+      c.shadowColor = "rgba(182,242,58,.7)"; c.shadowBlur = SCENE.bitGlow;
       c.fillText(bit.ch, bit.x, bit.y + bob);
       c.shadowBlur = 0;
     }

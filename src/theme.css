@@ -1,0 +1,37 @@
+/* The palette. Every colour on the site is named here; style.css and paper.css only use the names.
+   Dark is the default look. `theme light`, or the light/dark button, switches to the paper version.
+   The light colours keep the hues of the dark ones and are darkened until text clears 4.5:1 on the page. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0a08;     /* page: warm black */
+  --bone: #e9dfc8;   /* text */
+  --dim: #7a7160;    /* quiet text */
+  --amber: #ffb23e;  /* accent */
+  --green: #b6f23a;  /* prompt, cursor, blip's eyes and bits */
+  --lilac: #a99cff;  /* links, command names */
+  --rust: #d9643a;   /* small details, errors */
+  --rule: #2a2620;   /* hairlines */
+  --rule2: #3a3528;  /* box borders */
+  --link-line: rgba(169, 156, 255, .35);
+  --amber-hover: #ffc46a;
+  --glow-banner: 0 0 6px rgba(255, 178, 62, .55), 0 0 18px rgba(255, 178, 62, .25);
+  --glow-title: 0 0 14px rgba(255, 178, 62, .22);
+  --glow-cursor: 0 0 6px rgba(182, 242, 58, .7);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f5efe2;     /* page: warm paper */
+  --bone: #1d1a14;   /* text: the dark theme's page colour, a shade softer */
+  --dim: #6a6253;
+  --amber: #8a5300;
+  --green: #387000;
+  --lilac: #5747c9;
+  --rust: #aa4018;
+  --rule: #d6ccb6;
+  --rule2: #bfb39a;
+  --link-line: rgba(87, 71, 201, .35);
+  --amber-hover: #a36200;
+  --glow-banner: none;   /* nothing glows on paper */
+  --glow-title: none;
+  --glow-cursor: none;
+}
