@@ -349,7 +349,7 @@ And the complex-disk structure, the part that made this proposal its own, is so 
 
 ## Code
 
-Everything above can be rerun: the geometry with 18 tests, the three experiments, the result files and the figure scripts are in [research/escaping-flatland](https://github.com/nsquaredzz/nsquaredzz.github.io/tree/main/research/escaping-flatland).
+Everything above can be rerun. The geometry with its 18 tests, the three experiments, the result files and the figure scripts are in [github.com/nsquaredzz/escaping-flatland](https://github.com/nsquaredzz/escaping-flatland).
 
 ## References
 

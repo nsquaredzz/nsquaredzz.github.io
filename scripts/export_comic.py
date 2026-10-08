@@ -4,10 +4,13 @@ One source of truth: the markdown post in this repository. This script maps its 
 blog's own primitives (IssueHeader, SectionStamp, Admonition, Figure, PullQuote, DropCap), so both
 sites carry the same words, equations, tables and numbers.
 
-    python export_comic.py /path/to/Blog          # writes src/components/essay/EscapingFlatland.tsx
-                                                   # and copies light-theme figures to public/issues/escaping-flatland/
+    python3 scripts/export_comic.py <blog checkout> <light figures dir>
 
-Run `python make_figures.py --light` first.
+    <blog checkout>      a clone of github.com/Niyathnair/Blog
+    <light figures dir>  figures/light in a clone of github.com/nsquaredzz/escaping-flatland
+
+Writes src/components/essay/EscapingFlatland.tsx in the blog and copies the figures to its
+public/issues/escaping-flatland/. Needs pillow.
 """
 from __future__ import annotations
 
@@ -20,8 +23,8 @@ import sys
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-POST = os.path.join(HERE, "..", "..", "posts", "escaping-flatland.md")
-LIGHT = os.path.join(HERE, "figures-light")
+POST = os.path.join(HERE, "..", "posts", "escaping-flatland.md")
+LIGHT = ""          # set from the command line
 ACCENTS = ["yellow", "cyan", "red", "green"]
 SLUG = "escaping-flatland"
 
@@ -222,8 +225,11 @@ def render(kind, payload, st: State, blog_public: str) -> str:
 
 
 def main():
-    blog = sys.argv[1] if len(sys.argv) > 1 else ""
-    post = sys.argv[2] if len(sys.argv) > 2 else POST
+    global LIGHT
+    if len(sys.argv) < 3:
+        sys.exit(__doc__)
+    blog, LIGHT = sys.argv[1], sys.argv[2]
+    post = sys.argv[3] if len(sys.argv) > 3 else POST
     meta, body = frontmatter(open(post).read())
     st = State()
     public = os.path.join(blog, "public", "issues", SLUG) if blog else ""
@@ -235,7 +241,7 @@ def main():
     out = f'''"use client";
 
 /* Generated from posts/escaping-flatland.md in the nsquaredzz.github.io repository
-   by research/escaping-flatland/export_comic.py. Edit the markdown, then re-run the script. */
+   by scripts/export_comic.py. Edit the markdown, then re-run the script. */
 
 import Image from "next/image";
 import {{ Panel }} from "@/components/ui/Panel";

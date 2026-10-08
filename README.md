@@ -108,7 +108,8 @@ Argument.
 - `##` and `###` headings are numbered automatically and `##` headings make the contents list. figures are numbered automatically.
 - a markdown blockquote is a pull quote; its last paragraph is shown as the attribution.
 - `## Notes`, `## Further reading` and `## References` are left unnumbered.
-- a post backed by experiments keeps its code, tests and result files in `research/<slug>/` (see `research/escaping-flatland/`), so every number and plot can be regenerated.
+- a post backed by experiments has its own repository with the code, tests and result files, and links to it: [certified-skip](https://github.com/nsquaredzz/certified-skip), [escaping-flatland](https://github.com/nsquaredzz/escaping-flatland). Figures are generated there and copied into `public/blog/<slug>/`.
+- `scripts/export_comic.py` regenerates the comic-style copy of Escaping Flatland on the other blog from `posts/escaping-flatland.md`.
 - `revised: YYYY-MM-DD` in the front matter shows a revision date next to the original one.
 - `draft: true` in the front matter keeps a post out of the build.
 - `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
