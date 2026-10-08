@@ -79,6 +79,13 @@ a:hover { border-bottom-color: var(--lilac); }
 .paper pre code { color: var(--bone); }
 .paper hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
 
+/* pull quotes and epigraphs: last line is the attribution */
+.paper blockquote { margin: 26px 0 28px; padding: 4px 0 4px 22px; border-left: 2px solid var(--amber); }
+.paper blockquote p { margin: 0; color: var(--amber); font-size: 17px; line-height: 1.6; }
+.paper blockquote p + p { margin-top: 8px; color: var(--dim); font-size: 13px; }
+.paper blockquote p + p::before { content: "— "; }
+.env-tbl pre { margin-bottom: 0; }
+
 /* maths */
 .katex { font-size: 1.12em; color: var(--bone); }
 .eq { margin: 4px 0 20px; padding: 6px 0; overflow-x: auto; overflow-y: hidden; }
@@ -142,6 +149,7 @@ a:hover { border-bottom-color: var(--lilac); }
   .paper h2 { font-size: 17px; margin-top: 48px; }
   .env { padding: 12px 12px 0; }
   .katex { font-size: 1.02em; }
+  .paper blockquote p { font-size: 15px; }
 }
 @media print {
   .p-top, .p-toc, .p-progress, .p-foot { display: none; }

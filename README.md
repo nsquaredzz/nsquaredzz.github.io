@@ -106,6 +106,8 @@ Argument.
 - maths is LaTeX, rendered to html by katex at build time. no maths javascript is shipped. a typo in the LaTeX fails the build with the offending snippet.
 - blocks: `abstract`, `theorem`, `proposition`, `lemma`, `definition`, `proof`, `remark`, `note`, `tbl`.
 - `##` and `###` headings are numbered automatically and `##` headings make the contents list. figures are numbered automatically.
+- a markdown blockquote is a pull quote; its last paragraph is shown as the attribution.
+- `## Notes`, `## Further reading` and `## References` are left unnumbered.
 - `draft: true` in the front matter keeps a post out of the build.
 - `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
 

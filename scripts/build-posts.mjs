@@ -46,7 +46,7 @@ function render(md, slug) {
     let html;
     try { html = katex.renderToString(tex.trim(), { displayMode: display, throwOnError: true, strict: "ignore" }); }
     catch (e) { throw new Error(`KaTeX in ${slug}: ${e.message}\n  ${tex.trim().slice(0, 120)}`); }
-    math.push({ html, display });
+    math.push({ html, display, tex: tex.trim() });
     return `MATHX${math.length - 1}X`;
   };
   md = md.replace(/\$\$([\s\S]+?)\$\$/g, (_m, t) => `\n\n${stash(t, true)}\n\n`);
@@ -80,7 +80,7 @@ function render(md, slug) {
   let h2 = 0, h3 = 0;
   html = html.replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (_m, lvl, inner) => {
     const plain = inner.replace(/MATHX\d+X/g, "");
-    if (/^(references|acknowledg|appendix)/i.test(plain.trim()) && lvl === "2") {
+    if (/^(references|acknowledg|appendix|notes|footnotes|further reading)/i.test(plain.trim()) && lvl === "2") {
       const id = slugify(plain);
       toc.push({ id, num: "", text: inner, lvl: 2 });
       return `<h2 id="${id}">${inner}</h2>`;
@@ -88,7 +88,8 @@ function render(md, slug) {
     let num;
     if (lvl === "2") { h2++; h3 = 0; num = `${h2}`; } else { h3++; num = `${h2}.${h3}`; }
     const id = `s${num.replace(".", "-")}-${slugify(plain)}`;
-    toc.push({ id, num, text: inner, lvl: +lvl });
+    const plainText = inner.replace(/MATHX(\d+)X/g, (_x, i) => math[+i].tex.replace(/\\[a-zA-Z]+\{([^}]*)\}/g, "$1")).replace(/<[^>]+>/g, "");
+    toc.push({ id, num, text: inner, plain: plainText, lvl: +lvl });
     return `<h${lvl} id="${id}"><span class="num">${num}</span>${inner}</h${lvl}>`;
   });
 
@@ -133,10 +134,10 @@ for (const f of files) {
   const prose = body.split("\n").filter((l) => !l.startsWith("|") && !l.startsWith(":::")).join(" ").replace(/\$\$[\s\S]+?\$\$/g, " ").replace(/\$[^$]+\$/g, " x ");
   const words = prose.split(/\s+/).length;
   const minutes = Math.max(1, Math.round(words / 220));
-  const post = { slug, title: meta.title ?? slug, subtitle: meta.subtitle ?? "", date: meta.date ?? "", summary: meta.summary ?? "", tag: meta.tag ?? "", minutes, sections: toc.filter((t) => t.lvl === 2 && t.num).map((t) => t.text.replace(/<[^>]+>/g, "")) };
+  const post = { slug, title: meta.title ?? slug, subtitle: meta.subtitle ?? "", date: meta.date ?? "", summary: meta.summary ?? "", tag: meta.tag ?? "", minutes, sections: toc.filter((t) => t.lvl === 2 && t.num).map((t) => t.plain) };
   posts.push(post);
 
-  const tocHtml = toc.filter((t) => t.lvl === 2).map((t) => `<a href="#${t.id}">${t.num ? `<span class="num">${t.num}</span>` : `<span class="num"></span>`}${t.text}</a>`).join("\n      ");
+  const tocHtml = toc.filter((t) => t.lvl === 2).map((t) => `<a href="#${t.id}">${t.num ? `<span class="num">${t.num}</span>` : `<span class="num"></span>`}<span>${t.text}</span></a>`).join("\n      ");
   const page = `${head(post.title, post.summary, `/blog/${slug}/`)}
 <body class="paper-page">
 ${topbar(`cat ${slug}.md`)}
@@ -173,7 +174,7 @@ const index = `${head("blog", "Research notes and write-ups by Niyath Nair.", "/
 ${topbar("ls -lt")}
 <div class="p-wrap p-wrap-narrow">
   <article class="paper">
-    <header class="p-head"><h1>blog</h1><p class="p-sub">research notes, written up like papers.</p></header>
+    <header class="p-head"><h1>blog</h1><p class="p-sub">research notes and essays, set like papers.</p></header>
     <ul class="p-list">
 ${posts.map((p) => `      <li><a href="/blog/${p.slug}/"><span class="p-list-date">${esc(p.date)} · ${p.minutes} min</span><span class="p-list-title">${esc(p.title)}</span><span class="p-list-sum">${esc(p.summary)}</span></a></li>`).join("\n")}
     </ul>
