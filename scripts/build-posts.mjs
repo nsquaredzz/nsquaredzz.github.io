@@ -37,7 +37,7 @@ function webpSize(file) {
   return null;
 }
 
-const ENV = { theorem: "", proposition: "", lemma: "", definition: "", proof: "Proof.", remark: "", abstract: "Abstract", tbl: "", note: "" };
+const ENV = { theorem: "", proposition: "", lemma: "", definition: "", proof: "Proof.", remark: "", abstract: "Abstract", tbl: "", note: "", clips: "" };
 
 function render(md, slug) {
   // 1. maths out, so markdown never sees underscores, pipes or asterisks inside it
@@ -66,12 +66,21 @@ function render(md, slug) {
   let html = marked.parse(lines.join("\n"), { gfm: true });
 
   // 3. figures, tables, heading numbers
-  let fig = 0;
+  let fig = 0, clip = 0;
   html = html.replace(/<p><img src="([^"]+)" alt="([^"]*)"\s*\/?><\/p>/g, (_m, src, alt) => {
+    const cap = alt.replace(/MATHX(\d+)X/g, (_x, i) => math[+i].html);
+    if (/\.(mp4|webm)$/i.test(src)) {
+      // a clip: written like a figure, numbered on its own so that figure numbers in the text stay put.
+      // A .webp of the same name beside it is the poster, and gives the size to reserve.
+      clip++;
+      const poster = src.replace(/\.[^.]+$/, ".webp");
+      const psize = webpSize(path.join(root, "public", "blog", slug, poster));
+      const pdims = psize ? ` poster="/blog/${slug}/${poster}" width="${psize[0]}" height="${psize[1]}"` : "";
+      return `<figure class="clip" id="clip-${clip}"><video src="/blog/${slug}/${src}"${pdims} controls autoplay muted loop playsinline preload="${clip === 1 ? "auto" : "metadata"}" aria-label="Clip ${clip}"></video><figcaption><b>Clip ${clip}.</b> ${cap}</figcaption></figure>`;
+    }
     fig++;
     const size = webpSize(path.join(root, "public", "blog", slug, src));
     const dims = size ? ` width="${size[0]}" height="${size[1]}"` : "";
-    const cap = alt.replace(/MATHX(\d+)X/g, (_x, i) => math[+i].html);
     return `<figure id="fig-${fig}"><a href="/blog/${slug}/${src}"><img src="/blog/${slug}/${src}" alt="Figure ${fig}"${dims} loading="lazy" decoding="async"></a><figcaption><b>Figure ${fig}.</b> ${cap}</figcaption></figure>`;
   });
   html = html.replace(/<table>/g, '<div class="tbl-scroll"><table>').replace(/<\/table>/g, "</table></div>");

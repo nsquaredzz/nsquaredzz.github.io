@@ -8,6 +8,14 @@ where: Bengaluru
 summary: A one-line rule that decides which video patches a model can skip, with a proof of what cannot have happened inside a skipped patch. Four certificates, a sequential test for faint objects, real-time masks, one honest negative result, and an end-to-end check with a video language model.
 ---
 
+:::clips the idea in three clips
+![The rule at work on an office hallway camera. Left: the frame, with the patches sent to the model outlined in green. Right: what the model is left with when every other patch is reused from the last copy it was sent. On this clip 95 % of the patches are never sent.](clip-skip-hallway.mp4)
+
+![Why a proof matters. A square fades in over eight seconds on a lobby camera, and both rules skip the same share of patches. The consecutive-frame heuristic never sends the square, and Qwen2-VL answers that it is not there. The certified rule sends it once the change reaches the threshold, and the model sees it. One of the 48 trials of Section 13.](clip-blindspot-lobby.mp4)
+
+![The same change statistic taken from patches to pixels: object masks with one colour per object and no class labels, tracked from frame to frame at video rate on a laptop CPU, with nothing learned. Section 10.](clip-masks-hallway.mp4)
+:::
+
 :::abstract
 Video language models spend most of their tokens on patches that have not changed. The rules used today to skip those patches are heuristics: they compare the mean of a patch between consecutive frames and say nothing about what was thrown away. This note starts from a rule that fits on one line, *drop a patch when the spread of its change is below $\Delta$*, and proves what that buys: by stability of persistence diagrams, no object of contrast $\Delta$ can appear, vanish, split or merge inside a dropped patch, and the threshold cannot be raised without losing that statement.
 

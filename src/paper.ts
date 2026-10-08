@@ -20,6 +20,24 @@ if (links.length && "IntersectionObserver" in window) {
   pick();
 }
 
+// clips are muted loops: they play while they are on screen and rest when they are not.
+// With reduced motion they stay on their poster until the reader presses play.
+const clips = [...document.querySelectorAll<HTMLVideoElement>(".paper figure.clip video")];
+if (clips.length) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    for (const v of clips) { v.autoplay = false; v.pause(); v.load(); }
+  } else if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      }
+    }, { threshold: 0.35 });
+    for (const v of clips) io.observe(v);
+  }
+}
+
 // reading progress, as a terminal would show it
 const bar = document.createElement("div");
 bar.className = "p-progress";

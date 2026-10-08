@@ -102,6 +102,9 @@ a:hover { border-bottom-color: var(--lilac); }
 .env-definition .env-h { color: var(--lilac); }
 .env-remark, .env-note { border-left-color: var(--green); }
 .env-remark .env-h, .env-note .env-h { color: var(--green); }
+.env-clips { border: 0; padding: 0; margin: 26px 0 34px; }
+.env-clips .env-h { color: var(--dim); font-weight: 400; font-size: 13px; margin: 0 0 12px !important; }
+.env-clips figure:last-child { margin-bottom: 0; }
 .env-abstract { border-left-color: var(--amber); margin: 26px 0 30px; }
 .env-abstract .env-h { color: var(--dim); font-weight: 400; }
 
@@ -125,6 +128,7 @@ a:hover { border-bottom-color: var(--lilac); }
 .paper figure { margin: 8px 0 28px; }
 .paper figure a { border: 0; display: block; }
 .paper figure img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); background: #fff; }
+.paper figure video { display: block; width: 100%; height: auto; border: 1px solid var(--rule); background: #0d1117; }
 .paper figcaption { color: var(--dim); font-size: 13px; line-height: 1.6; margin-top: 10px; }
 .paper figcaption b { color: var(--amber); }
 
