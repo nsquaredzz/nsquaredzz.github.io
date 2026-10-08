@@ -51,6 +51,7 @@ public/
 everything on the site comes from `src/content.json`.
 
 - `dirs.work`, `dirs.projects`, `dirs.lab`, `dirs.notes`: each entry is a file. `name` is what `ls` shows, `title`/`when`/`tag` show in listings and box titles, `body` is a list of lines. a line starting with `# ` is the heading, `- ` is a bullet, an empty line is a paragraph gap. `[label](url)` makes a link, backticks make inline code.
+- `intro`: the labelled rows under the banner on the first screen. `bio` is the prose version used by `whoami` and plain mode.
 - `hidden`: dotfiles that only show up with `ls -a`.
 - `fetchable`: the paths blip can bring back when it fetches a bit.
 - `email`: leave empty and `sudo hire niyath` points at github instead.

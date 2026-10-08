@@ -16,6 +16,7 @@ export interface Content {
   github: string;
   resume: string;
   bio: string[];
+  intro?: { k: string; v: string }[];
   status: string;
   links: { label: string; url: string }[];
   dirs: Record<string, FileEntry[]>;

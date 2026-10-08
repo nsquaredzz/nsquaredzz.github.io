@@ -10,10 +10,38 @@
     "founding research engineer at anthill ai. i build retrieval, knowledge graphs, agents and text-to-sql for llms.",
     "before this: product analyst at slice, data science at jio. b.tech materials engineering, iit jodhpur. open to applied ai and research engineering roles."
   ],
+  "intro": [
+    {
+      "k": "now",
+      "v": "founding research engineer at anthill ai"
+    },
+    {
+      "k": "builds",
+      "v": "retrieval, knowledge graphs, agents and text-to-sql for llms"
+    },
+    {
+      "k": "before",
+      "v": "product analyst at slice. data science at jio platforms"
+    },
+    {
+      "k": "studied",
+      "v": "b.tech materials engineering, iit jodhpur"
+    },
+    {
+      "k": "looking",
+      "v": "open to applied ai and research engineering roles"
+    }
+  ],
   "status": "open to the next quest",
   "links": [
-    { "label": "github", "url": "https://github.com/nsquaredzz" },
-    { "label": "resume", "url": "/resume.pdf" }
+    {
+      "label": "github",
+      "url": "https://github.com/nsquaredzz"
+    },
+    {
+      "label": "resume",
+      "url": "/resume.pdf"
+    }
   ],
   "dirs": {
     "work": [

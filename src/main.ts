@@ -39,7 +39,9 @@ function boot() {
     `<div class="line hey">hey, i'm</div>` +
     `<pre class="banner wide" aria-label="${esc(C.name)}">${BANNER_WIDE.join("\n")}</pre>` +
     `<pre class="banner small" aria-hidden="true">${BANNER_SMALL.join("\n")}</pre>` +
-    C.bio.map((b) => `<div class="line bio">${esc(b)}</div>`).join("") +
+    (C.intro?.length
+      ? `<dl class="intro">${C.intro.map((r) => `<div><dt>${esc(r.k)}</dt><dd>${esc(r.v)}</dd></div>`).join("")}</dl>`
+      : C.bio.map((b) => `<div class="line bio">${esc(b)}</div>`).join("")) +
     `<div class="line hint">this site is a terminal. type <code>help</code>, or use the buttons if you're in a hurry.</div>` +
     `<div class="tags" role="group" aria-label="shortcuts"></div>`;
   termRoot.appendChild(head);
