@@ -47,7 +47,7 @@ scripts/build-posts.mjs  markdown + LaTeX -> blog/<slug>/index.html and src/gene
 public/
   blog/<slug>/         figures for a post
   fonts/               jetbrains mono, self-hosted
-  resume.pdf           not in the repo yet. drop one here and the resume button starts working
+  resume.pdf           what the resume button opens. replace the file to update it
 ```
 
 ## add content
@@ -58,7 +58,7 @@ everything on the site comes from `src/content.json`.
 - `intro`: the labelled rows under the banner on the first screen. `bio` is the prose version used by `whoami` and plain mode.
 - `hidden`: dotfiles that only show up with `ls -a`.
 - `fetchable`: the paths blip can bring back when it fetches a bit.
-- `email`: leave empty and `sudo hire niyath` points at github instead.
+- `email`, `linkedin`, `github`: shown by `contact`, `sudo hire niyath`, the side pane and plain mode.
 - `firstCommit`: what `uptime` counts from.
 
 no code changes needed. the plain version renders from the same file.

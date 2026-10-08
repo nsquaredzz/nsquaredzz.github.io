@@ -298,3 +298,4 @@ body::after {
 :root[data-theme="flat"] body::after { display: none; }
 :root[data-theme="flat"] .banner { text-shadow: none; }
 :root[data-theme="flat"] .prompt .cursor { box-shadow: none; }
+.side .line { overflow-wrap: anywhere; }

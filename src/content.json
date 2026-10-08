@@ -3,8 +3,9 @@
   "handle": "niyath@nair",
   "location": "bengaluru",
   "firstCommit": "2026-09-23T16:08:35Z",
-  "email": "",
+  "email": "iamniyathnair@gmail.com",
   "github": "https://github.com/nsquaredzz",
+  "linkedin": "https://www.linkedin.com/in/niyath-nair-9601b0231",
   "resume": "/resume.pdf",
   "bio": [
     "founding research engineer at anthill ai. i build retrieval, knowledge graphs, agents and text-to-sql for llms.",
@@ -39,6 +40,14 @@
       "url": "https://github.com/nsquaredzz"
     },
     {
+      "label": "linkedin",
+      "url": "https://www.linkedin.com/in/niyath-nair-9601b0231"
+    },
+    {
+      "label": "email",
+      "url": "mailto:iamniyathnair@gmail.com"
+    },
+    {
       "label": "resume",
       "url": "/resume.pdf"
     }
@@ -48,7 +57,7 @@
       {
         "name": "anthill.txt",
         "title": "anthill ai, founding research engineer",
-        "when": "2025 to now, bengaluru",
+        "when": "jul 2026 to now, bengaluru",
         "body": [
           "# anthill ai",
           "founding research engineer. small team, so the job is wide.",
@@ -64,7 +73,7 @@
       {
         "name": "slice.txt",
         "title": "slice, product analyst",
-        "when": "bengaluru",
+        "when": "may 2025 to jul 2026",
         "body": [
           "# slice",
           "product analyst at a fintech that moved fast and shipped weekly.",
@@ -77,7 +86,7 @@
       {
         "name": "jio.txt",
         "title": "jio platforms, data science intern",
-        "when": "two internships",
+        "when": "summers 2023 and 2024",
         "body": [
           "# jio platforms",
           "two data science internships, at scale that makes you respect indexes.",

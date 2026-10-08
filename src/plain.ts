@@ -46,6 +46,7 @@ export function renderPlain(root: HTMLElement, c: Content) {
     <ul>
       ${c.email ? `<li>email: <a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>` : ""}
       <li>github: <a href="${c.github}" rel="noopener">${esc(c.github.replace("https://", ""))}</a></li>
+      ${c.linkedin ? `<li>linkedin: <a href="${c.linkedin}" rel="noopener">${esc(c.linkedin.replace("https://www.", ""))}</a></li>` : ""}
       <li>resume: <a href="${c.resume}">resume.pdf</a></li>
     </ul>
   </section>

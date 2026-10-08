@@ -175,6 +175,7 @@ function boot() {
     `<section class="box"><span class="box-title">contact</span>` +
       (C.email ? `<div class="line"><a href="mailto:${esc(C.email)}">${esc(C.email)}</a></div>` : "") +
       `<div class="line"><a href="${C.github}" target="_blank" rel="noopener">${esc(C.github.replace("https://", ""))}</a></div>` +
+      (C.linkedin ? `<div class="line"><a href="${C.linkedin}" target="_blank" rel="noopener">${esc(C.linkedin.replace("https://www.", ""))}</a></div>` : "") +
       `<div class="line"><button class="t-link f" data-cmd="open resume.pdf">resume.pdf</button></div>` +
       `<div class="line"><button class="t-link f" data-cmd="sudo hire niyath">sudo hire niyath</button></div>` +
     `</section>` +

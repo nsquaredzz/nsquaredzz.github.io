@@ -14,6 +14,7 @@ export interface Content {
   firstCommit: string;
   email: string;
   github: string;
+  linkedin?: string;
   resume: string;
   bio: string[];
   intro?: { k: string; v: string }[];
@@ -42,9 +43,10 @@ export class FS {
       name: "contact.txt",
       body: [
         "# contact",
-        content.email ? `email: ${content.email}` : "email: run `sudo hire niyath`",
-        `github: ${content.github}`,
-        `resume: ${content.resume}`,
+        content.email ? `email: [${content.email}](mailto:${content.email})` : "email: run `sudo hire niyath`",
+        `github: [${content.github.replace("https://", "")}](${content.github})`,
+        ...(content.linkedin ? [`linkedin: [${content.linkedin.replace("https://www.", "")}](${content.linkedin})`] : []),
+        `resume: [resume.pdf](${content.resume})`,
       ],
     });
   }
