@@ -142,7 +142,7 @@ def table(rows: list[str]) -> str:
     cells = [[c.strip() for c in r.strip().strip("|").split("|")] for r in rows]
     head, body = cells[0], cells[2:]
     wide = len(head) >= 7                               # shrink wide tables so every column fits the page
-    pad, size = ("px-1.5", "text-[10.5px]") if wide else ("px-3", "text-[13px]")
+    pad, size = ("px-1", "text-[10px]") if wide else ("px-3", "text-[13px]")
     th = "".join(f'<th className="border-b-[3px] border-black {pad} py-2 text-left font-mono {"text-[10.5px]" if wide else "text-[12px]"} uppercase tracking-wider">{inline(c)}</th>' for c in head)
     trs = "".join("<tr>" + "".join(f'<td className="border-b border-black/20 {pad} py-1.5 font-mono {size} whitespace-nowrap">{inline(c)}</td>' for c in r) + "</tr>" for r in body)
     return f'<div className="overflow-x-auto bg-[#fffdf2]"><table className="w-full border-collapse"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table></div>'
@@ -228,7 +228,9 @@ def main():
     st = State()
     public = os.path.join(blog, "public", "issues", SLUG) if blog else ""
     parts = [render(k, p, st, public) for k, p in blocks(body)]
-    words = len(re.sub(r"\$\$.*?\$\$", " ", body, flags=re.S).split())
+    # same reading-time rule as scripts/build-posts.mjs: prose only, no tables, captions or display maths
+    prose = " ".join(l for l in body.split("\n") if not l.startswith(("|", ":::", "![")))
+    words = len(re.sub(r"\$[^$]+\$", " x ", re.sub(r"\$\$.*?\$\$", " ", prose, flags=re.S)).split())
     toc = ",\n".join(f"  {{ id: {json.dumps(i)}, label: {json.dumps(l)} }}" for i, l in [("abstract", "Abstract")] + st.toc)
     out = f'''"use client";
 
