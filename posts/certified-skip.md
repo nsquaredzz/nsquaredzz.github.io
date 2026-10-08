@@ -709,6 +709,8 @@ The mechanism is at the pixel level. The heuristic never refreshes a patch that 
 
 The reference implementation is a header-only C++17 core with a C ABI and a command-line tool that reads raw grey frames on standard input, plus a numpy reference that must match the C++ bit for bit, and a Python layer for baselines, the topology checker, noise analysis and the experiments.
 
+The code, the tests, the recorded outputs of every run and short demo clips are at [github.com/nsquaredzz/certified-skip](https://github.com/nsquaredzz/certified-skip), under the MIT licence.
+
 :::tbl **Table 12.** Throughput on an Apple M4.
 | component | implementation | 352×288 | 1280×720 | note |
 |---|---|---|---|---|
