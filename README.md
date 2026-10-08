@@ -108,7 +108,8 @@ Argument.
 - `##` and `###` headings are numbered automatically and `##` headings make the contents list. figures are numbered automatically.
 - a markdown blockquote is a pull quote; its last paragraph is shown as the attribution.
 - `## Notes`, `## Further reading` and `## References` are left unnumbered.
-- computed figures have their script in `scripts/figures/` (for example `python3 scripts/figures/escaping_flatland.py`), so every plot can be regenerated.
+- a post backed by experiments keeps its code, tests and result files in `research/<slug>/` (see `research/escaping-flatland/`), so every number and plot can be regenerated.
+- `revised: YYYY-MM-DD` in the front matter shows a revision date next to the original one.
 - `draft: true` in the front matter keeps a post out of the build.
 - `npm run posts` regenerates the pages. `npm run dev` and `npm run build` run it first. the generated `blog/` and `src/generated/` folders are not committed.
 

@@ -148,7 +148,7 @@ ${topbar(`cat ${slug}.md`)}
   </nav>
   <article class="paper">
     <header class="p-head">
-      <p class="p-kicker">${esc(post.tag || "research")} · ${esc(post.date)} · ${minutes} min read</p>
+      <p class="p-kicker">${esc(post.tag || "research")} · ${esc(post.date)}${meta.revised ? ` · revised ${esc(meta.revised)}` : ""} · ${minutes} min read</p>
       <h1>${esc(post.title)}</h1>
       ${post.subtitle ? `<p class="p-sub">${esc(post.subtitle)}</p>` : ""}
       <p class="p-author">${esc(meta.author ?? "Niyath Nair")}${meta.where ? ` · ${esc(meta.where)}` : ""}</p>
