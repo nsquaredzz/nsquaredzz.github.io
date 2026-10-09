@@ -2,6 +2,7 @@
 title: Certified patch skipping for fixed-camera video
 subtitle: What can be proved about the patches a video model never sees, and how far that proof stretches on real cameras.
 date: 2026-10-08
+revised: 2026-10-09
 tag: research
 author: Niyath Nair
 where: Bengaluru
@@ -11,7 +12,7 @@ summary: A one-line rule that decides which video patches a model can skip, with
 :::clips the idea in three clips
 ![The rule at work on an office hallway camera. Left: the frame, with the patches sent to the model outlined in green. Right: what the model is left with when every other patch is reused from the last copy it was sent. On this clip 95 % of the patches are never sent.](clip-skip-hallway.mp4)
 
-![Why a proof matters. A square fades in over eight seconds on a lobby camera, and both rules skip the same share of patches. The consecutive-frame heuristic never sends the square, and Qwen2-VL answers that it is not there. The certified rule sends it once the change reaches the threshold, and the model sees it. One of the 48 trials of Section 13.](clip-blindspot-lobby.mp4)
+![The blind spot of comparing consecutive frames. A square fades in over eight seconds on a lobby camera, and both rules skip the same share of patches. The consecutive-frame heuristic never sends the square, and Qwen2-VL answers that it is not there. The certified rule compares with the last copy it sent, so the square reaches the model once the change reaches the threshold. One of the 48 trials of Section 13.](clip-blindspot-lobby.mp4)
 
 ![The same change statistic taken from patches to pixels: object masks with one colour per object and no class labels, tracked from frame to frame at video rate on a laptop CPU, with nothing learned. Section 10.](clip-masks-hallway.mp4)
 :::
@@ -19,9 +20,9 @@ summary: A one-line rule that decides which video patches a model can skip, with
 :::abstract
 Video language models spend most of their tokens on patches that have not changed. The rules used today to skip those patches are heuristics: they compare the mean of a patch between consecutive frames and say nothing about what was thrown away. This note starts from a rule that fits on one line, *drop a patch when the spread of its change is below $\Delta$*, and proves what that buys: by stability of persistence diagrams, no object of contrast $\Delta$ can appear, vanish, split or merge inside a dropped patch, and the threshold cannot be raised without losing that statement.
 
-On real cameras the rule drops 99 % of patches on clean codecs and only 73 % on a noisy analog hallway. The cause is sub-pixel edge jitter, and it motivates three further certificates built from different mathematics: transport (the flat norm), multi-scale box averages, and a quotient by sub-pixel motion. Quotient plus multi-scale keeps 2.7 to 5.5 % of patches where the original rule keeps 15 to 19 %, at the same 100 % recall of planted objects. A sequential layer taken from quickest change detection then catches persistent objects an order of magnitude fainter than any single-frame rule can see: across 25 fixed-camera clips, recall of contrast-12 objects goes from 0.13 to 0.96 for at most 0.3 points of drop rate. The median drop rate over those clips is 0.989.
+On real cameras the rule drops 99 % of patches on clean codecs and only 73 % on a noisy analog hallway. The cause is sub-pixel edge jitter, and it motivates three further certificates built from different mathematics: transport (the flat norm), multi-scale box averages, and a quotient by sub-pixel motion. Quotient plus multi-scale keeps 2.7 to 5.5 % of patches where the original rule keeps 15 to 19 %, at the same 100 % recall of the planted small and slow-fading objects. A sequential layer taken from quickest change detection then catches persistent objects an order of magnitude fainter than any single-frame rule can see: across 25 fixed-camera clips, recall of contrast-12 objects goes from 0.13 to 0.96 for at most 0.3 points of drop rate. The median drop rate over those clips is 0.989, at an operating point whose worst-case certificate is weaker than the one-line rule's: contrast 80 for a single pixel, falling to 30 for an object that contains a 7×7 box. The one-line rule at $\Delta = 32$ has a median of 0.956.
 
-The same machinery gives class-agnostic, pixel-accurate object masks at 19 to 25 fps on 1080p and 140 to 178 fps at CIF resolution on a laptop CPU, with a certificate for the labels that are reused. One idea did not work, and the note says so: adaptive look scheduling is sound but does not beat uniform sampling, for a structural reason. End to end with an unmodified Qwen2-VL-2B at identical token budgets, an object that fades in slowly reaches the model's answer in 23 of 26 perceivable cases through the certified rule and in 2 of 26 through a consecutive-frame rule.
+The same machinery gives class-agnostic, pixel-level object masks at 18 to 29 fps on 1080p and 140 to 178 fps at CIF resolution on a laptop CPU, with a certificate for the labels that are reused. The masks are not scored against human-labelled ground truth. One idea did not work, and the note says so: adaptive look scheduling is sound but does not beat uniform sampling, for a structural reason. End to end with an unmodified Qwen2-VL-2B and every rule at the same drop rate, an object that fades in slowly reaches the model's answer in 23 of 26 perceivable cases through the certified rule and in 2 of 26 through a consecutive-frame rule. That test shows the model an image rebuilt from each rule's decisions. It does not skip tokens inside the model.
 :::
 
 ## The problem
@@ -103,6 +104,7 @@ For independent noise of standard deviation $\sigma$ per frame, the expected spr
 
 - **Camera motion.** The certificate is per patch for a fixed camera.
 - **Features finer than one patch's topology**, and anything that straddles patches in a way no single patch sees as a $\Delta$ change.
+- **A change that is uniform over a whole patch.** The flat interior of an object larger than a patch shifts each patch it covers by a constant, which has spread zero. Those patches are dropped and the change is carried only by the shift $c$. The view adds $c$ back. A model that reuses a cached token would have to be sent $c$ and be able to apply it.
 - **Rings.** The theorem covers $H_1$ as well, but the checker used for audits computes only $H_0$ (dark and bright blobs).
 
 Details of the semantics: the first frame is always kept and excluded from the drop rate; pixels beyond the last full patch row or column are ignored; 8-bit input is differenced in 32-bit integers; the comparison with $\Delta$ is strict.
@@ -262,7 +264,7 @@ Let $\beta_r$ be the $(2r{+}1)$-box mean filter on its valid region. If the patc
 (1) is $M_r(e) < \varepsilon_r$ restated, since $\beta_r$ is linear and $\beta_r c = c$. (2) is stability applied to the filtered images. (3) follows from (2) as in Theorem 1.
 :::
 
-*Reading.* An object of contrast $\Delta_r = 2\varepsilon_r$ that contains a $(2r{+}1)$-box is, after box filtering, a feature of persistence at least $\Delta_r$, and (3) says it cannot appear while the patch is dropped. Thin things, such as a one-pixel strip, are not such objects at scales $r \ge 1$. That is the point.
+*Reading.* An object of contrast $\Delta_r = 2\varepsilon_r$ that contains a $(2r{+}1)$-box is, after box filtering, a feature of persistence at least $\Delta_r$, and (3) says it cannot appear while the patch is dropped. Thin things, such as a one-pixel strip, are not such objects at scales $r \ge 1$. That is the point. The box has to lie inside one patch: an object that straddles a patch boundary is covered only at the size of the largest box it contains within a single patch.
 
 **Tightness.** A change of $\pm \varepsilon_r$ on exactly one $(2r{+}1)$-box, midrange removed, has $M_r = \varepsilon_r$ and creates a $2\varepsilon_r$ feature of $\beta_r F$. No rule reading only the $M$ statistics can drop at $M_r \ge \varepsilon_r$.
 
@@ -421,7 +423,7 @@ the minimax lower bound for a box of unknown position and scale in Gaussian nois
 On codec-clean cameras static blocks repeat *exactly* between frames. The learned spread $s_{w,r}$ collapses to numerical zero, and the codec's periodic requantisation, every 6 to 12 frames on the VIRAT 720p scenes, fires 94 % of the patches at once. One scene lost eleven points of drop rate to it.
 
 1. **A physical floor on the spread**, $s \leftarrow \max(s, s_0)$ with $s_0 = 0.5$ grey levels. A box-mean statistic cannot be resolved below a fraction of a quantisation step, so a narrower null is an artefact of the data and not of the scene.
-2. **A global-coincidence veto.** If more than a fraction $0.1$ of all patches fire in the same frame, the event is scene-wide (a keyframe, an illumination change) and not an object. No patch is kept and the frame is used to train the null. Under the independence that Proposition 7 assumes, the expected number of simultaneous fires is far below that fraction, so the veto does not trigger on genuine objects.
+2. **A global-coincidence veto.** If more than a fraction $0.1$ of all patches fire in the same frame, the event is scene-wide (a keyframe, an illumination change) and not an object. No patch is kept and the frame is used to train the null. Under the independence that Proposition 7 assumes, the expected number of simultaneous false fires is far below that fraction, so the veto does not trigger on noise, or on objects that cover a small part of the frame. A faint change that covers more than a tenth of the frame at once, such as haze or smoke, is vetoed along with the keyframes. That case was not tested.
 
 Measured, the two guards restore the lost drop rate exactly (0.883 → 0.998) and leave faint-object recall unchanged.
 
@@ -431,7 +433,7 @@ New planted events: 45 **faint persistent** objects per clip, 6×6 px at contras
 
 An offline oracle bounds what is achievable. The fraction of patch-frames with real change according to a temporal-median background that no online rule can use ($\lvert F - \text{median} \rvert > 30$ on at least 8 px, 3-frame majority) is 0.081 on the hallway, 0.034 on the lobby and 0.014 on VIRAT. The rules below keep 0.055 to 0.059, 0.027 to 0.029 and 0.012 to 0.015: at or below the oracle, because a person who pauses needs no new token. **There is no drop-rate headroom left.** The gains from here are in what gets *seen*.
 
-:::tbl **Table 5.** Faint-object recall at the same token budget. All rules at the threshold giving 100 % recall of the objects of Table 4.
+:::tbl **Table 5.** Faint-object recall, with each rule at the threshold giving 100 % recall of the objects of Table 4. The last two rules of each clip sit at nearly the same drop rate; the range rule keeps more patches at that threshold, as the drop column shows.
 | rule | clip | drop | faint 8 | faint 12 | faint 16 | mover coverage |
 |---|---|---|---|---|---|---|
 | range | hallway | 0.808 | 0.27 | 0.33 | 0.47 | 1.00 |
@@ -541,7 +543,7 @@ The unary term uses $\max(\tilde z, z_{\mathrm{acc}})$: strong instantaneous evi
 
 ![VIRAT street scene at 1920×1080 with wind in the trees. A car and several pedestrians, each with its own mask. The foliage is not segmented: its variance has been learned, so it stops being change.](masks-street.webp)
 
-**Fidelity of tracking against solving.** On the hallway camera, with the same evidence, the tracked mask at 3 steps per frame against the fully converged per-frame solution (150 iterations) has mean IoU 0.938 and median 0.957, with 3 % of frames below 0.8. The KKT residual on the frozen region stays at or below 0.050 on every frame of the final runs, by construction of the reactivation rule. C++ against numpy on the same clip: mean IoU 0.987 to 0.993.
+**Fidelity of tracking against solving.** On the hallway camera, with the same evidence, the tracked mask at 3 steps per frame against the fully converged per-frame solution (150 iterations) has mean IoU 0.938 and median 0.957, with 3 % of frames below 0.8. The KKT residual on the frozen region stays at or below 0.050 on every frame of the final runs, by construction of the reactivation rule. C++ against numpy on the same clip: mean IoU 0.987 to 0.993. Both figures compare the tracker with the method's own solutions. No mask here is scored against human-labelled ground truth.
 
 :::tbl **Table 6.** Speed of the tracker, C++, Apple M4, rendering excluded. The cost follows the active set, not the resolution.
 | clip | resolution | active set | ms / frame | fps |
@@ -623,7 +625,7 @@ This is the result that justifies the main design. Looking at every frame with t
 
 ## Breadth: 25 fixed-camera clips
 
-Every fixed-camera clip available was run with operating points fixed in advance from Sections 8 and 9: range at $\Delta = 32$, quotient + multi-scale at $\Delta_0 = 80$, sequential at $z' = 8$ with the floor and the veto. Up to 600 frames per clip at native rate; VIRAT scenes analysed at 960×544. Planted per clip: 20 small, 20 tiny, 10 fades and 10 faint persistent objects (6×6, contrast 12).
+Every fixed-camera clip available was run at the thresholds fixed in advance from Sections 8 and 9: range at $\Delta = 32$, quotient + multi-scale at $\Delta_0 = 80$, sequential at $z' = 8$. The floor and the veto of Section 9 were not fixed in advance. The first pass over these clips is what showed they were needed, and the sequential columns below are the rerun with both in place, so they are not a held-out result. Up to 600 frames per clip at native rate, which is 20 to 25 seconds per camera; VIRAT scenes analysed at 960×544. Planted per clip: 20 small, 20 tiny, 10 fades and 10 faint persistent objects (6×6, contrast 12).
 
 :::tbl **Table 8.** All 25 clips. *Oracle change* is the fraction of patch-frames with real change according to an offline temporal-median background. The last column is recall of contrast-12 persistent objects without and with the sequential layer.
 | clip | source | res. | fps | $\sigma$ | oracle change | range | quotient + MS | + sequential | faint-12: MS / seq |
@@ -666,7 +668,9 @@ Every fixed-camera clip available was run with operating points fixed in advance
 
 The cost of the sequential layer over quotient + multi-scale is at most 0.003 and 0.001 at the median. It was eleven points on one scene before the two guards of Section 9.
 
-On codec-clean cameras, where static blocks repeat exactly and $\sigma = 0$, the certified rule drops 99 to 99.9 %. The lowest numbers are honest ones: a river camera whose water moves (oracle change 11 %, drop 90.8 %), two busy scenes with 23 to 29 % of patch-frames in real motion, and the analog hallway.
+At $\Delta_0 = 80$ and $\gamma = \tfrac12$ the worst-case certificate behind the last two columns is contrast 80 for a single pixel, 46 for an object that contains a 3×3 box, 36 for 5×5 and 30 for 7×7. That is a weaker statement than Theorem 1 at $\Delta = 32$, which is the first column.
+
+On the 15 codec-clean clips, where static blocks repeat exactly and $\sigma = 0$, the full rule drops between 96.5 % and 99.9 %, and 99 % or more on 11 of them. Fourteen of the 15 are VIRAT scenes, where the MPEG-4 encoder had already frozen the static blocks, so much of the redundancy was removed before the rule saw the frame. The lowest numbers are honest ones: a river camera whose water moves (oracle change 11 %, drop 90.8 %), two busy scenes with 23 to 29 % of patch-frames in real motion, and the analog hallway.
 
 **Not covered:** night and bad weather. The ChangeDetection 2014 server was unreachable when the breadth run was made, so those clips are the next to add. The heavy-tailed analog cameras here (hallway, bridges) are the closest proxy for what they will do to the range rule.
 
@@ -674,7 +678,7 @@ On codec-clean cameras, where static blocks repeat exactly and $\sigma = 0$, the
 
 **Model.** Qwen2-VL-2B-Instruct [15], unmodified, on Apple's MPS backend, 2.3 s per query.
 
-**Protocol.** The model is shown the *view* a pruning rule leaves it: kept patches at truth, dropped patches at their last kept content. This isolates the information content of the pruning decisions from the mechanics of token reuse and needs no change to the model. The token savings are the drop rates of the earlier sections. Three rules run at the *same* drop rate per clip: a consecutive-frame mean rule of the EVS and run-length kind, calibrated to the certified rule's drop rate; the certified quotient + multi-scale rule; and the certified rule with the sequential layer.
+**Protocol.** The model is shown the *view* a pruning rule leaves it: kept patches at truth, dropped patches at their last kept content. For the two certified rules that is the view of Rules 1 and 3, the last kept content moved by the fitted sub-pixel shift with the brightness shift $c$ added. The consecutive-frame rule has no such terms, and its view is the last kept content alone. This isolates the information content of the pruning decisions from the mechanics of token reuse and needs no change to the model. The model processes a full image every time, so nothing is saved in this experiment; the savings a deployment could reach are the drop rates of the earlier sections. Three rules run at the *same* drop rate per clip: a consecutive-frame mean rule of the EVS and run-length kind, calibrated to the certified rule's drop rate; the certified quotient + multi-scale rule; and the certified rule with the sequential layer.
 
 ### Does certified pruning change the model's answers on ordinary footage?
 
@@ -707,15 +711,19 @@ A square of contrast 70 fades in over 6 to 8 s, at 0.4 to 0.9 grey levels per fr
 
 ![One trial on the lobby camera at the end of the fade, all rules at a 97.9 % drop rate. Kept patches are outlined in green, the planted square in yellow. The consecutive-frame view never refreshed the square's patches, so the object is not in the view and the model answers no. Both certified views contain it and the model answers yes.](e2e-lobby.webp)
 
-The mechanism is at the pixel level. The heuristic never refreshes a patch that changes by less than its threshold per frame, however large the change becomes. The certified rule refreshes when the accumulated change reaches $\Delta$.
+The mechanism is at the pixel level. The heuristic never refreshes a patch that changes by less than its threshold per frame, however large the change becomes. The certified rule refreshes when the accumulated change reaches $\Delta$. The square is larger than a patch. The patches on its border are refreshed. A patch that lies wholly inside it changes uniformly, which is no reason to refresh under any rule here, and it shows the square in the view through the shift $c$.
 
-**Verdict.** At identical token budgets, an object that fades in slowly reaches the model's answer through the certified rule in 23 of 26 perceivable cases and through the consecutive-frame rule in 2 of 26. On ordinary footage the certified view leaves the model's answers as stable as the full frame, or far more stable than the heuristic view.
+**Verdict.** With every rule at the same drop rate, an object that fades in slowly reaches the model's answer through the certified rule in 23 of 26 perceivable cases and through the consecutive-frame rule in 2 of 26. On ordinary footage the certified view leaves the model's answers as stable as the full frame, or far more stable than the heuristic view.
 
-**Limits to state.** A 2-billion-parameter model on a laptop. Three cameras. Synthetic squares and not real objects: the model perceives them in only 26 of 48 truth frames, which is why the metric is conditioned. Views and not actual token reuse inside the model. The mechanism those limits cannot touch, the pixel-level presence of the object in the view, is 48 of 48 against 6 of 48.
+**Limits to state.** A 2-billion-parameter model on a laptop. Three cameras. Synthetic squares and not real objects: the model perceives them in only 26 of 48 truth frames, which is why the metric is conditioned. Views and not actual token reuse inside the model, and the certified views use the shift $c$, which a cached token does not carry.
+
+The only baseline is the consecutive-frame rule. Mean against last kept, which caught every fade in Table 2, was not run here or in Sections 8, 9 and 12. A consecutive-frame rule with a full refresh every few seconds would also bound how long a fade can stay unseen, and was not run either. So the pixel-level result, the object present in the view in 48 of 48 trials against 6 of 48, measures the cost of comparing consecutive frames. It does not show that a proof is needed to avoid that cost.
 
 ## Implementation and speed
 
-The reference implementation is a header-only C++17 core with a C ABI and a command-line tool that reads raw grey frames on standard input, plus a numpy reference that must match the C++ bit for bit, and a Python layer for baselines, the topology checker, noise analysis and the experiments.
+The reference implementation is a header-only C++17 core with a C ABI and a command-line tool that reads raw grey frames on standard input, plus a numpy reference whose keep decisions must match the C++ exactly for the range, quotient and sequential rules, and a Python layer for baselines, the topology checker, noise analysis and the experiments.
+
+The mask tracker agrees with its numpy version to a mean IoU of 0.987 to 0.993, not exactly, and the transport certificate and the look scheduler exist only in numpy.
 
 The code, the tests, the recorded outputs of every run and short demo clips are at [github.com/nsquaredzz/certified-skip](https://github.com/nsquaredzz/certified-skip), under the MIT licence.
 
@@ -747,8 +755,12 @@ The multi-scale rule is integral images and costs about the same as the range ru
 
 - Moving cameras. The quotient certificate generalises to homographies in principle; none of it is implemented or measured.
 - Night, rain, snow and thermal footage.
-- Real token reuse inside a model. Section 13 measures the information in the view, not latency or memory in a deployed model.
+- Real token reuse inside a model. Section 13 measures the information in the view, not latency or memory in a deployed model, and it leaves open how a cached token would receive the brightness shift $c$.
 - A larger model and real, not synthetic, slow-appearing objects in the end-to-end test.
+- Recall on real, annotated events. CAVIAR and VIRAT are distributed with hand-labelled tracks, and they are not used here: every recall figure is on planted synthetic objects.
+- Mean against last kept, and a consecutive-frame rule with a periodic full refresh, as baselines on real footage and in the end-to-end test.
+- Long recordings. Each clip is 20 to 25 seconds. Nothing here runs for hours or through a change of lighting.
+- Colour. Every rule runs on luma.
 - An exact flat-norm solver for audits, and $H_1$ in the topology checker.
 
 ## How the project actually went
@@ -761,7 +773,7 @@ The order of the sections is the order of the work, and several of the results e
 4. **The breadth run then broke the sequential rule again**, on the cleanest cameras: static blocks repeated exactly, the learned spread collapsed to zero, and codec requantisation fired almost every patch at once. A floor and a veto restored it.
 5. **High-resolution footage broke the mask tracker in three small ways**: a per-frame displacement bound of 8 px inherited from CIF silently disabled prediction for cars at 1080p and left a trailing smear (now 48 px); an active-set test on raw grey levels made half the frame active under wind (now studentised, 5 to 10 %); and ghosts appeared where a car had been parked during initialisation. A fourth was a plain bug: an unsized buffer in the C++ ghost code crashed the process on first use. Silent crashes in native code are the first thing to look for when a render script prints nothing.
 6. **The first scheduling benchmark defined a miss as "three or more refreshed patches" and collapsed to looking at every frame**, because continuous activity made every window a miss. With the onset definition the experiment became meaningful, and its answer was no.
-7. **The first end-to-end protocol placed bright squares on bright surfaces half the time**, and the small model could not see them even in the truth frame. The second protocol contrasts the square with its surroundings, and the metric is conditioned on the model perceiving the object at all.
+7. **The first end-to-end protocol placed bright squares on bright surfaces half the time**, and the small model could not see them even in the truth frame. In that run the certified view contained the square in 34 of 36 trials; the two misses were bright squares on the lobby camera. The second protocol contrasts the square with its surroundings, and the metric is conditioned on the model perceiving the object at all.
 
 ## References
 
