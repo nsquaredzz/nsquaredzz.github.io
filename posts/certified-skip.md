@@ -2,12 +2,16 @@
 title: Certified patch skipping for fixed-camera video
 subtitle: What can be proved about the patches a video model never sees, and how far that proof stretches on real cameras.
 date: 2026-10-08
-revised: 2026-10-09
+revised: 2026-10-11
 tag: research
 author: Niyath Nair
 where: Bengaluru
 summary: A one-line rule that decides which video patches a model can skip, with a proof of what cannot have happened inside a skipped patch. Four certificates, a sequential test for faint objects, real-time masks, one honest negative result, and an end-to-end check with a video language model.
 ---
+
+:::note Continued
+There is a second part: [Certified skipping, part 2: the picture the model holds](/blog/certified-skip-held-copy/). It finds that the certificate below is about a re-levelled image and not about the copy a model holds, closes that with a one-line change, and tests it on real sunset footage.
+:::
 
 :::clips the idea in three clips
 ![The rule at work on an office hallway camera. Left: the frame, with the patches sent to the model outlined in green. Right: what the model is left with when every other patch is reused from the last copy it was sent. On this clip 95 % of the patches are never sent.](clip-skip-hallway.mp4)
