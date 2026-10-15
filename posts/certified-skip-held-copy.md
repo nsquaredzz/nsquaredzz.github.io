@@ -15,7 +15,7 @@ summary: A follow-up to the certified patch-skipping note. The rule forgave a br
 :::
 
 :::note Where this fits
-This continues [Certified patch skipping for fixed-camera video](/blog/certified-skip/). That note builds the rule and its certificates; this one is about a gap in what the certificate was a statement *about*, the one-line change that closes it, and what it costs. Code, proofs and every number are at [github.com/nsquaredzz/certified-skip](https://github.com/nsquaredzz/certified-skip): `THEORY.md` section 9 and `RESULTS.md` Part VIII.
+This continues [Certified patch skipping for fixed-camera video](/blog/certified-skip/). That note builds the rule and its certificates; this one is about a gap in what the certificate was a statement *about*, the one-line change that closes it, and what it costs. There is a [part 3](/blog/certified-tracking/): the certificate applied to point tracking, and why it does not beat a learned tracker. Code, proofs and every number are at [github.com/nsquaredzz/certified-skip](https://github.com/nsquaredzz/certified-skip): `THEORY.md` section 9 and `RESULTS.md` Part VIII.
 :::
 
 :::abstract
